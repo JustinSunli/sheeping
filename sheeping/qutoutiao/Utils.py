@@ -1,0 +1,51 @@
+# coding: utf-8
+from time import sleep
+from appium import webdriver
+import re
+import time
+import os
+import sys
+import math
+import random
+from qutoutiao import key_codes
+
+class Utils:
+    def __init__(self,driver):
+        self.driver = driver
+        self.width=self.driver.get_window_size().get('width')
+        self.height=self.driver.get_window_size().get('height')
+        self.originalWidth = 1080
+        self.originalHeigth = 2160
+        self.mark = 0.3
+    def readnovels(self,textname):
+        file = open(textname,'r')
+        result = file.readlines()
+        file.close()
+        return result
+        
+    def ClickPoint(self,fromPoint,toPoint):
+        (fromX,fromY) = fromPoint
+        (toX,toY) = toPoint
+        
+        fromX = fromX + (toX-fromX)*self.mark
+        fromY= fromY+(toY-fromY)*self.mark
+        toX = toX - (toX-fromX)*self.mark
+        toY = toY - (toY-fromY)*self.mark
+        
+        resFromX = math.ceil((fromX/self.originalWidth)*self.width) 
+        resFromY = math.ceil((fromY/self.originalHeigth)*self.height)
+        
+        resToX = math.floor((toX/self.originalWidth)*self.width)
+        resToY = math.floor((toY/self.originalHeigth)*self.height)
+        
+        clickPointX = random.randint(resFromX,resToX)
+        clickPointY = random.randint(resFromY,resToY)
+        return (clickPointX,clickPointY)
+    
+    def centerPoint(self,fromPoint,toPoint):
+        (fromX,fromY) = fromPoint
+        (toX,toY) = toPoint
+        centerX = ((fromX+toX)/2)/self.originalWidth * self.width
+        centerY = ((fromY+toY)/2)/self.originalHeigth * self.height
+        return (centerX,centerY)
+        

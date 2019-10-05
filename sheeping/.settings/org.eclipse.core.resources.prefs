@@ -1,0 +1,15 @@
+eclipse.preferences.version=1
+encoding//qutoutiao/Automation.py=utf-8
+encoding//qutoutiao/DouYinAutomation.py=utf-8
+encoding//qutoutiao/DriverSwipe.py=utf-8
+encoding//qutoutiao/Utils.py=utf-8
+encoding//qutoutiao/baseoperation.py=utf-8
+encoding//qutoutiao/keyboards.py=utf-8
+encoding//qutoutiao/kuaikandianautomation.py=utf-8
+encoding//qutoutiao/kuaishouautomation.py=utf-8
+encoding//qutoutiao/quanminautomation.py=utf-8
+encoding//qutoutiao/qujianpanautomation.py=utf-8
+encoding//qutoutiao/qutoutiaoautomation.py=utf-8
+encoding//qutoutiao/shuabaoautomation.py=utf-8
+encoding//qutoutiao/wechatautomation.py=utf-8
+encoding//qutoutiao/weishiautomation.py=utf-8
