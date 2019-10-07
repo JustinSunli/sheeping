@@ -382,8 +382,14 @@ class  QujianpanAutomation(BaseOperation):
         if element:
             element.click()
         else:
-            #Tencent ads union
-            self.keyboard.clickAPoint((60,45), (150,135))  
+            self.width=self.driver.get_window_size().get('width')
+            self.height=self.driver.get_window_size().get('height')
+            if self.width ==720 and self.height==1366:
+                #coolpad
+                self.clickAAbsolutePoint((45,95),(94,141))
+            else:
+                #Tencent ads union
+                self.keyboard.clickAPoint((60,45), (150,135))  
     def writeGabageDic(self):
         with open('gabageconfig.json','w',encoding='utf-8') as file: 
             json.dump(self.gabageDict, file, ensure_ascii=False)   

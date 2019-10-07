@@ -68,10 +68,13 @@ class  ShuabaoAutomation(BaseOperation):
         self.driver.quit()        
  
     def watchvedios(self,number):
-        sleepseconds = 18
+        sleepseconds = 10
         sleep(sleepseconds+random.randint(0,10000)/1000)
         self.driver.back()
         sleep(sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()
+        sleep(sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()        
         
         for iter in range(number):
             self.driverSwipe.SwipeUp()

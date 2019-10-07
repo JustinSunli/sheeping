@@ -90,23 +90,34 @@ class  KuaiKanDianAutomation(BaseOperation):
         
         
     def clickMe(self):
+        #like the vedio
+        if random.randint(0,125) % 5 ==0:
+            element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/like_icon')
+            if element:
+                element.click()
+        
         sleep(1+random.randint(0,3000)/1000)        
         element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/timer_anchor')
         if element:
             element.click()
             sleep(random.randint(0,3000)/1000)
             self.driver.back()
-            sleep(3+random.randint(0,3000)/1000)        
+            sleep(3+random.randint(0,3000)/1000)  
+              
             
     def watchvedios(self,number):
-        sleep(10+random.randint(0,5000)/1000)
+        sleepseconds = 10
+        sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
-        sleep(10+random.randint(0,5000)/1000)
+        sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
-        sleep(10+random.randint(0,5000)/1000)
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.driver.back()
+        
         #go to mini vedio
         self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.yuncheapp.android.pearl:id/home_page_tab_bar']/android.widget.RelativeLayout[4]").click()
 
+        #choose one
         #sleep(10+random.randint(0,5000)/1000)
         self.keyboard.clickAPoint((0,205), (537,1159))
         

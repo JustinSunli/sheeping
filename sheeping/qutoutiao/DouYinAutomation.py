@@ -19,6 +19,8 @@ from qutoutiao import keyboards
 import traceback
 from qutoutiao.baseoperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
+
 #assii unicode
 from urllib.request import quote
 
@@ -66,7 +68,11 @@ class  DouYinAutomation(BaseOperation):
         self.driver.quit()        
  
     def watchvedios(self,number):
-        sleepseconds = 20
+        sleepseconds = 10
+        sleep(sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()
+        sleep(sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()
         sleep(sleepseconds+random.randint(0,10000)/1000)
         self.driver.back()
         sleep(sleepseconds+random.randint(0,10000)/1000)
@@ -74,12 +80,11 @@ class  DouYinAutomation(BaseOperation):
         for iter in range(number):
             self.driverSwipe.SwipeUp()
             sleep(sleepseconds+random.randint(0,5000)/1000) 
-            if random.randint(0,100) % 2:
-                #Double Click like the vedio
-                #self.driverSwipe.clickTheCenter() 
-                sleep(3+random.randint(0,10000)/1000)
-                self.driver.back()
-                print()
+            #like the vedio
+            if random.randint(0,125) % 5 ==0:
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.support.v4.view.ViewPager/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.ImageView')
+                if element:
+                    element.click()
             
             #do not watch too many 
             self.currentcount+=1      
@@ -98,6 +103,8 @@ class  DouYinAutomation(BaseOperation):
                 self.watchvedios(self.basecount)
                 self.tearDown()
                 break
+            except WebDriverException:
+                break            
             except Exception:
                 print('phone session terminated!')
                 traceback.print_exc()
@@ -109,8 +116,8 @@ if __name__ == '__main__':
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
     devices = [('DU2YYB14CL003271','4.4.2')]
-    devices = [('SAL0217A28001753','9')]
-    devices = [('A7QDU18420000828','9')]  
+    devices = [('SAL0217A28001753','9.1')]
+    #devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9')]     
     for (deviceName,version) in devices:
         t = threading.Thread(target=DouYinAutomation(deviceName,version).actAutomation(), args=(deviceName,version,))

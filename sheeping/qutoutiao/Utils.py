@@ -42,6 +42,25 @@ class Utils:
         clickPointY = random.randint(resFromY,resToY)
         return (clickPointX,clickPointY)
     
+    def ClickAbsolutePoint(self,fromPoint,toPoint):
+        (fromX,fromY) = fromPoint
+        (toX,toY) = toPoint
+        
+        fromX = fromX + (toX-fromX)*self.mark
+        fromY= fromY+(toY-fromY)*self.mark
+        toX = toX - (toX-fromX)*self.mark
+        toY = toY - (toY-fromY)*self.mark
+        
+        resFromX = math.ceil(fromX) 
+        resFromY = math.ceil(fromY)
+        
+        resToX = math.floor(toX)
+        resToY = math.floor(toY)
+        
+        clickPointX = random.randint(resFromX,resToX)
+        clickPointY = random.randint(resFromY,resToY)
+        return (clickPointX,clickPointY)
+        
     def centerPoint(self,fromPoint,toPoint):
         (fromX,fromY) = fromPoint
         (toX,toY) = toPoint

@@ -19,6 +19,8 @@ from qutoutiao import keyboards
 import traceback
 from qutoutiao.baseoperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
+
 #assii unicode
 from urllib.request import quote
 
@@ -68,9 +70,14 @@ class  QuanMinAutomation(BaseOperation):
         self.driver.quit()        
  
     def watchvedios(self,number):
-        sleep(15+random.randint(0,10000)/1000)
+        sleepseconds = 10
+        sleep(sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()        
+        sleep(sleepseconds+random.randint(0,10000)/1000)
         self.driver.back()
-        sleep(15+random.randint(0,10000)/1000)
+        sleep(sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()
+        
 
         self.keyboard.clickAPoint((3,198), (537,1047))  
         
@@ -79,6 +86,13 @@ class  QuanMinAutomation(BaseOperation):
         for iter in range(number):
             self.driverSwipe.SwipeUp()
             sleep(sleepseconds+random.randint(0,5000)/1000)
+            
+            #like the vedio
+            if random.randint(0,125) % 5 ==0:
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.FrameLayout[@resource-id="com.baidu.minivideo:id/detail_praise_lottie"]/android.widget.ImageView')
+                if element:
+                    element.click()            
+            
             self.currentcount+=1
             if(self.currentcount>self.basecount):
                 break
@@ -94,6 +108,8 @@ class  QuanMinAutomation(BaseOperation):
                 self.init_driver()
                 self.watchvedios(self.basecount)
                 self.tearDown()
+                break
+            except WebDriverException:
                 break
             except Exception:
                 print('phone session terminated!')
