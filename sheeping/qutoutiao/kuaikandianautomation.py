@@ -37,13 +37,15 @@ class  KuaiKanDianAutomation(BaseOperation):
         # adb logcat -c // clear logs
         # adb logcat ActivityManager:I *:s
         
-#         
+#
+
         self.deviceName=deviceName
         self.version=version
         self.username=username
         self.password=password
+        self.driver = None
           
-        self.basecount = 10
+        self.basecount = 5
         self.currentcount = 0              
 #         
 #         self.username = username
@@ -90,23 +92,33 @@ class  KuaiKanDianAutomation(BaseOperation):
         
         
     def clickMe(self):
-        #like the vedio
-        if random.randint(0,125) % 5 ==0:
-            element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/like_icon')
-            if element:
-                element.click()
+
         
-        sleep(1+random.randint(0,3000)/1000)        
-        element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/timer_anchor')
-        if element:
-            element.click()
-            sleep(random.randint(0,3000)/1000)
+        sleep(1+random.randint(0,3000)/1000)   
+        #like the vedio
+        if random.randint(0,125) % 5 ==0: 
+            self.keyboard.clickAPoint((910,1075), (1000,1170))
+            sleep(3+random.randint(0,3000)/1000)
             self.driver.back()
-            sleep(3+random.randint(0,3000)/1000)  
+            sleep(1+random.randint(0,3000)/1000)
+                
+#         element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/timer_anchor')
+#         if element:
+#             element.click()
+#             sleep(3+random.randint(0,3000)/1000)
+#             self.driver.back()
+#             sleep(1+random.randint(0,3000)/1000)  
+        #like the vedio
+        if random.randint(0,125) % 3 ==0:
+#             element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/like_icon')
+#             if element:
+#                 element.click()
+            self.keyboard.clickAPoint((927,1750), (985,1782))
+            sleep(random.randint(0,5000)/1000)            
               
             
     def watchvedios(self,number):
-        sleepseconds = 10
+        sleepseconds = 5
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
         sleep(sleepseconds+random.randint(0,5000)/1000)
@@ -121,11 +133,15 @@ class  KuaiKanDianAutomation(BaseOperation):
         #sleep(10+random.randint(0,5000)/1000)
         self.keyboard.clickAPoint((0,205), (537,1159))
         
-        sleepseconds = 15
+        sleepseconds = 10
         sleep(sleepseconds+random.randint(0,10000)/1000)
         for iter in range(number):
             self.driverSwipe.SwipeUp()
-            sleep(sleepseconds+random.randint(0,5000)/1000)
+            #sometimes pause
+            if random.randint(0,1024) % 17 ==0:
+                sleep(sleepseconds+80+random.randint(0,15000)/1000)
+            else:
+                sleep(sleepseconds+random.randint(0,15000)/1000)             
             self.clickMe()
             
             self.currentcount+=1
@@ -136,20 +152,23 @@ class  KuaiKanDianAutomation(BaseOperation):
         print()
         
     def actAutomation(self):
+        crashCount=0
         while(True):
             try:
                 self.init_driver()
                 self.watchvedios(self.basecount)
                 self.tearDown()
                 break
-#             except WebDriverException:
-#                 print
-                #break        
+            except WebDriverException:
+                traceback.print_exc()
+                break        
             except Exception:
-                print('phone session terminated!')
                 traceback.print_exc()  
-                if not self.driver :
-                    self.tearDown()                  
+                if self.driver :
+                    self.tearDown() 
+                crashCount+=1                    
+                if crashCount > 5:
+                    break                                        
                       
 
 if __name__ == '__main__':    
@@ -157,6 +176,7 @@ if __name__ == '__main__':
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
     devices = [('DU2YYB14CL003271','4.4.2')]
     devices = [('SAL0217A28001753','9.1')]
+    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X     
     #devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:

@@ -19,6 +19,8 @@ from qutoutiao import keyboards
 import traceback
 from qutoutiao.baseoperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
+
 #assii unicode
 from urllib.request import quote
 
@@ -40,8 +42,9 @@ class  WeishiAutomation(BaseOperation):
         self.version=version
         self.username=username
         self.password=password
-        self.basecount = 10
-        self.currentcount = 0          
+        self.basecount = 5
+        self.currentcount = 0
+        self.driver = None          
         
 #         
 #         self.username = username
@@ -66,7 +69,7 @@ class  WeishiAutomation(BaseOperation):
         self.driver.quit()        
  
     def watchvedios(self,number):
-        sleepseconds = 10
+        sleepseconds = 5
         sleep(sleepseconds+random.randint(0,10000)/1000)
         self.driver.back()
         sleep(sleepseconds+random.randint(0,10000)/1000)
@@ -76,7 +79,13 @@ class  WeishiAutomation(BaseOperation):
         sleep(sleepseconds+random.randint(0,10000)/1000)                
         
         for iter in range(number):
-            self.driverSwipe.SwipeUp()            
+            self.driverSwipe.SwipeUp()  
+            #sometimes pause
+            if random.randint(0,1024) % 11 ==0:
+                sleep(sleepseconds+80+random.randint(0,15000)/1000)
+            else:
+                sleep(sleepseconds+random.randint(0,15000)/1000)
+                                      
             self.currentcount+=1
             if(self.currentcount>self.basecount):
                 break  
@@ -84,33 +93,41 @@ class  WeishiAutomation(BaseOperation):
         sleep(random.randint(0,2000)/1000) 
         element = self.find_element_by_id_without_exception(self.driver, 'com.tencent.weishi:id/task_progress_bar')
         if element:
-            element.click()    
-                        
-        while(True):
-            element = self.find_element_by_xpath_without_exception(self.driver, "//android.webkit.WebView/android.view.View/android.view.View/android.view.View[4]/android.view.View[3]/android.widget.Button[contains(@text,'领取')]")
-            if element:
-                element.click()                
-            else:
+            element.click() 
+            sleep(random.randint(0,2000)/1000)   
+           
+                     
+        for iter in range(20):
+            self.keyboard.clickAPoint((260,1155), (850,1250))
+            sleep(random.randint(0,2000)/1000) 
+            element = self.find_element_by_id_without_exception(self.driver, 'com.tencent.weishi:id/task_progress_bar')
+            if element: 
                 break
 
         
-        #sleep(sleepseconds+random.randint(0,10))        
+        sleep(sleepseconds+random.randint(0,15000)/1000)        
         print()
         
 
         
     def actAutomation(self):
+        crashCount=0
         while(True):
             try:
                 self.init_driver()
                 self.watchvedios(self.basecount)
                 self.tearDown()
                 break
-            except Exception:
-                print('phone session terminated!')
+            except WebDriverException:
                 traceback.print_exc()  
-                if not self.driver :
-                    self.tearDown()          
+                break               
+            except Exception:
+                traceback.print_exc()  
+                if self.driver :
+                    self.tearDown() 
+                crashCount+=1                    
+                if crashCount > 5:
+                    break                                
 
 if __name__ == '__main__':    
 

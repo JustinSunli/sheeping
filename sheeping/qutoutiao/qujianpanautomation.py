@@ -43,6 +43,7 @@ class  QujianpanAutomation(BaseOperation):
         self.version=version
         self.username=username
         self.password=password
+        self.driver = None
         
         self.gabageDict = {}
 #         
@@ -328,13 +329,13 @@ class  QujianpanAutomation(BaseOperation):
                 if element:
                     self.gabageDict[garbageName] = gtype
                     self.find_element_by_id_without_exception(self.driver, 'lastAnswerRightAlertClose').click()
-                    break
+                    return True
                 #end wrong
                 element = self.find_element_by_id_without_exception(self.driver, 'watchResultBtn1')
                 if element:
                     self.gabageDict[garbageName] = self.find_element_by_id_without_exception(self.driver, 'lastErrorGarbageType').text
                     self.find_element_by_id_without_exception(self.driver, 'lastAnswerErrorAlertClose').click()
-                    break                
+                    return True                
                 
                 element = self.find_element_by_id_without_exception(self.driver, 'coinDoubleBtn')
                 if element:
@@ -378,6 +379,10 @@ class  QujianpanAutomation(BaseOperation):
             print()
         return True
     def closeAddsWindow(self):
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭广告')]")
+        if element:
+            element.click()
+            return
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/tt_video_ad_close')
         if element:
             element.click()
@@ -386,7 +391,7 @@ class  QujianpanAutomation(BaseOperation):
             self.height=self.driver.get_window_size().get('height')
             if self.width ==720 and self.height==1366:
                 #coolpad
-                self.clickAAbsolutePoint((45,95),(94,141))
+                self.keyboard.clickAAbsolutePoint((45,95),(94,141))
             else:
                 #Tencent ads union
                 self.keyboard.clickAPoint((60,45), (150,135))  
@@ -400,6 +405,7 @@ class  QujianpanAutomation(BaseOperation):
         print()
         
     def actAutomation(self):
+        crashCount=0
         while(True):
             try:
                 self.init_driver()
@@ -414,27 +420,32 @@ class  QujianpanAutomation(BaseOperation):
                     else:
                         count+=1
                     
-                    if(count == 3):
+                    if(count == 5):
                         #too many elements could not found
                         raise AutomationException('Automation Exception!Ｒedo')
                 
                 self.tearDown()
                 break
-#             except WebDriverException:
-#                 break        
+            except WebDriverException:
+                traceback.print_exc()
+                break        
             except Exception:
-                print('phone session terminated!')
                 traceback.print_exc()         
-                if not self.driver :
-                    self.tearDown()        
+                if self.driver :
+                    self.tearDown()  
+                crashCount+=1                    
+                if crashCount > 10:
+                    break                             
 
 if __name__ == '__main__':    
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
     devices = [('DU2YYB14CL003271','4.4.2')]
-    devices = [('PBV0216C02008555','8.0')] #huawei P9 
+    #devices = [('PBV0216C02008555','8.0')] #huawei P9 
     devices = [('ORL1193020723','9.1.1')]#Cupai 9
     #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X 
+    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
+    
     
        
 

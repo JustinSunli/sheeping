@@ -78,7 +78,17 @@ class  ShuabaoAutomation(BaseOperation):
         
         for iter in range(number):
             self.driverSwipe.SwipeUp()
-            sleep(sleepseconds+random.randint(0,5000)/1000)  
+            #sometimes pause
+            if random.randint(0,1024) % 11 ==0:
+                sleep(sleepseconds+80+random.randint(0,15000)/1000)
+            else:
+                sleep(sleepseconds+random.randint(0,15000)/1000)              
+            #like the vedio
+            if random.randint(0,125) % 3 ==0:
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.ImageView[@resource-id="com.jm.video:id/image_view"]')
+                if element:
+                    element.click()            
+                    sleep(random.randint(0,5000)/1000)             
             
             self.currentcount+=1
             if(self.currentcount>self.basecount):
@@ -87,20 +97,23 @@ class  ShuabaoAutomation(BaseOperation):
         print()
         
     def actAutomation(self):
+        crashCount=0
         while(True):
             try:
                 self.init_driver()
                 self.watchvedios(self.basecount)
                 self.tearDown()
                 break
-#             except WebDriverException:
-#                 print
-                #break            
-            except Exception:
-                print('phone session terminated!')
+            except WebDriverException:
                 traceback.print_exc()
-                if not self.driver :
-                    self.tearDown()        
+                break            
+            except Exception:
+                traceback.print_exc()
+                if self.driver :
+                    self.tearDown()  
+                crashCount+=1                    
+                if crashCount > 5:
+                    break                             
 
 if __name__ == '__main__':    
 

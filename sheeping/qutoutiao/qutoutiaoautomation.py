@@ -45,7 +45,8 @@ class QutoutiaoAutomation(BaseOperation):
         self.password=password
 
         self.basecount = 10
-        self.currentcount = 0          
+        self.currentcount = 0   
+        self.driver = None       
         
 #         
 #         self.username = username
@@ -226,15 +227,27 @@ class QutoutiaoAutomation(BaseOperation):
 #         element=self.find_element_by_id_without_exception(self.driver, 'com.jifen.qukan:id/ma')
 #         if element:
 #             element.click()        
-        sleep(20+random.randint(0,5000)/1000)
+        sleepseconds = 5
+        sleep(sleepseconds+random.randint(0,5000)/1000)
         self.vedioCount+=1
         for iter in range(number):
             self.driverSwipe.SwipeUp()
             self.clickMe()
-            sleep(20+random.randint(0,5000)/1000)
+            
+                        #sometimes pause
+            if random.randint(0,1024) % 11 ==0:
+                sleep(sleepseconds+80+random.randint(0,5000)/1000)
+            else:
+                sleep(sleepseconds+random.randint(0,5000)/1000)
             self.vedioCount+=1
             
-            
+            #like the vedio
+            if random.randint(0,125) % 3 ==0:
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.support.v7.widget.RecyclerView/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.ImageView')
+                if element:
+                    element.click()            
+                    sleep(random.randint(0,15000)/1000) 
+                    
             self.currentcount+=1
             if(self.currentcount>2*self.basecount):
                 break            
@@ -244,26 +257,30 @@ class QutoutiaoAutomation(BaseOperation):
         
         
     def actAutomation(self):
+        crashCount=0
         while(True):
             try:
                 self.init_driver()
                 self.sign()
-                self.watchVedios(self.basecount+random.randint(0,2))
+                self.watchVedios(random.randint(0,3))
                 self.readArticles(self.basecount+random.randint(0,2))
                 self.tearDown()
                 break
-#             except WebDriverException:
-#                 break        
+            except WebDriverException:
+                traceback.print_exc()   
+                break     
             except Exception:
-                print('phone session terminated!')
                 traceback.print_exc() 
-                if not self.driver :
-                    self.tearDown()   
+                if self.driver :
+                    self.tearDown() 
+                crashCount+=1                    
+                if crashCount > 5:
+                    break                         
 
 if __name__ == '__main__':   
     devices = [('DU2YYB14CL003271','4.4.2')]#,('A7QDU18420000828','9'),('SAL0217A28001753','9')]     
     devices = [('SAL0217A28001753','9')]
-    #devices = [('A7QDU18420000828','9')]
+    devices = [('A7QDU18420000828','9')]
     for (deviceName,version) in devices:
         qutoutiao = QutoutiaoAutomation(deviceName,version)
         t = threading.Thread(target=qutoutiao.actAutomation(), args=())

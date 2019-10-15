@@ -17,7 +17,7 @@ class Utils:
         self.originalWidth = 1080
         self.originalHeigth = 2160
         self.mark = 0.3
-    def readnovels(self,textname):
+    def watchvedios(self,textname):
         file = open(textname,'r')
         result = file.readlines()
         file.close()

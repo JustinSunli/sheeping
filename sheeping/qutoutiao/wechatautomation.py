@@ -39,7 +39,8 @@ class  WeChatAutomation(BaseOperation):
         self.username=username
         self.password=password
         self.basecount = 10
-        self.currentcount = 0            
+        self.currentcount = 0  
+        self.driver = None          
         
 #         
 #         self.username = username
@@ -134,7 +135,12 @@ class  WeChatAutomation(BaseOperation):
             self.keyboard.clickAPoint((810,1234), (835,1257))                                            
        
     def chatWithWilliam(self,limits):
-        novellines = self.util.readnovels('LesMiserables.txt')
+        #in case there exists words
+        element=self.find_element_by_xpath_without_exception(self.driver,"//android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.Button")
+        if element:
+            element.click()  
+                  
+        novellines = self.util.watchvedios('LesMiserables.txt')
         lettercount = 0
         batch = 120
         hongbaocount=0
@@ -181,7 +187,7 @@ class  WeChatAutomation(BaseOperation):
                         if element:
                             element.click()
                     
-                    sleep(1+random.randint(0,2000)/1000/4)
+                    sleep(5+random.randint(0,2000)/1000/4)
             
                     #switch Chinese to English
                     #self.keyboard.pressChineseEnglish()
@@ -209,6 +215,7 @@ class  WeChatAutomation(BaseOperation):
         print("the whole novels is typed in! Wonderfull work!")
         
     def actAutomation(self):
+        crashCount=0
         while(True):
             try:
                 self.init_driver()
@@ -216,14 +223,16 @@ class  WeChatAutomation(BaseOperation):
                 self.chatWithWilliam(self.basecount)
                 self.tearDown()
                 break
-#             except WebDriverException:
-#                 print
-#                 #break     
-            except Exception:
-                print('phone session terminated!')
+            except WebDriverException:
                 traceback.print_exc()  
-                if not self.driver :
-                    self.tearDown()           
+                break     
+            except Exception:
+                traceback.print_exc()  
+                if self.driver :
+                    self.tearDown()  
+                crashCount+=1                    
+                if crashCount > 5:
+                    break                               
 
 
 if __name__ == '__main__':   
@@ -232,7 +241,7 @@ if __name__ == '__main__':
     devices = [('SAL0217A28001753','9')]
     #devices = [('A7QDU18420000828','9')]  
     devices = [('PBV0216C02008555','8.0')] #huawei P9
-    #devices = [('ORL1193020723','9.1.1')]#Cupai 9
+    devices = [('ORL1193020723','9.1.1')]#Cupai 9
     #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X 
 
     #devices = [('SAL0217A28001753','9')]     
