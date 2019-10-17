@@ -27,6 +27,7 @@ from urllib.request import quote
 
 class  HuoShanAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+        super(HuoShanAutomation,self).__init__()
         #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
         
         #adb not found
@@ -77,6 +78,12 @@ class  HuoShanAutomation(BaseOperation):
         if element:
             element.click()
             
+            if self.isFirst:
+                sleep(self.sleepseconds+random.randint(0,10000)/1000)
+                self.driver.back()        
+                sleep(self.sleepseconds+random.randint(0,10000)/1000)
+                self.driver.back()                         
+                            
             element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.Image[@text="开宝箱得金币"]')
             if element:
                 element.click()
@@ -131,29 +138,29 @@ class  HuoShanAutomation(BaseOperation):
    
         print()        
     def watchvedios(self,number):
-        sleepseconds = 5
+        self.sleepseconds = 5
         if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()        
         if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()       
         if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()   
         #self.keyboard.clickAPoint((248,534), (484,804))  
         
-        sleepseconds = 5
-        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.sleepseconds = 5
+        sleep(self.sleepseconds+random.randint(0,5000)/1000)
         
         for iter in range(number):
             self.driverSwipe.SwipeUp()
             
             #sometimes pause
             if random.randint(0,1024) % 17 ==0:
-                sleep(sleepseconds+80+random.randint(0,15000)/1000)
+                sleep(self.sleepseconds+80+random.randint(0,15000)/1000)
             else:
-                sleep(sleepseconds+random.randint(0,15000)/1000)
+                sleep(self.sleepseconds+random.randint(0,15000)/1000)
             
             #like the vedio
             if random.randint(0,125) % 3 ==0:

@@ -19,6 +19,7 @@ from selenium.common.exceptions import WebDriverException
 
 class QutoutiaoAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+        super(QutoutiaoAutomation,self).__init__()
         # 空间坐标 打开手机--设置--开发者选项---指针位置-启动后，你手动触摸那个webview元素，手机的上方会显示（x，y）坐标 
         
         #adb not found

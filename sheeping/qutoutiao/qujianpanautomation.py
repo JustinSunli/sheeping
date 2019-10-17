@@ -28,6 +28,7 @@ from _ast import Raise
 
 class  QujianpanAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+        super(QujianpanAutomation,self).__init__()
         #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
         
         #adb not found
@@ -329,13 +330,13 @@ class  QujianpanAutomation(BaseOperation):
                 if element:
                     self.gabageDict[garbageName] = gtype
                     self.find_element_by_id_without_exception(self.driver, 'lastAnswerRightAlertClose').click()
-                    return True
+                    #return True
                 #end wrong
                 element = self.find_element_by_id_without_exception(self.driver, 'watchResultBtn1')
                 if element:
                     self.gabageDict[garbageName] = self.find_element_by_id_without_exception(self.driver, 'lastErrorGarbageType').text
                     self.find_element_by_id_without_exception(self.driver, 'lastAnswerErrorAlertClose').click()
-                    return True                
+                    #return True                
                 
                 element = self.find_element_by_id_without_exception(self.driver, 'coinDoubleBtn')
                 if element:

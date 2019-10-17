@@ -9,7 +9,11 @@ class AutomationException(Exception):
         Exception.__init__(self)
         self.message=message
      
-class BaseOperation:      
+class BaseOperation:   
+    def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+       self.isFirst = True
+       self.sleepseconds = 5
+       
     def find_element_by_id_without_exception(self,driver, id):
         #   
         element = None

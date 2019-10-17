@@ -27,6 +27,7 @@ from urllib.request import quote
 
 class  KuaiShouAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+        super(KuaiShouAutomation,self).__init__()
         #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
         
         #adb not found

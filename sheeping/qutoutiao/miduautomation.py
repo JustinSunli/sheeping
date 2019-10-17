@@ -26,6 +26,7 @@ from urllib.request import quote
 
 class  MiduAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+        super(MiduAutomation,self).__init__()
         #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
         
         #adb not found
@@ -73,13 +74,12 @@ class  MiduAutomation(BaseOperation):
     def tearDown(self):
         self.driver.quit()        
     def sign(self):
-        sleep(10+random.randint(0,10000)/1000)
-        sleepseconds = 5
-        if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+        sleep(10+random.randint(0,10000)/1000) 
+        
+        if self.isFirst:
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()        
-        if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()
         #福利
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.RadioGroup/android.widget.RadioButton[4]')
@@ -115,6 +115,7 @@ class  MiduAutomation(BaseOperation):
                 element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="明天再来"]')
                 if element:
                     self.luckyDrawed = True
+                    self.driver.back()
                     break                          
                 element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="开始抽奖"]')
                 if element:
@@ -131,7 +132,11 @@ class  MiduAutomation(BaseOperation):
                     element.click() 
                     #watch ads
                     sleep(35+random.randint(0,5000)/1000)  
-                    self.closeAddsWindow() 
+                    for i in range(30):
+                        element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="点击重播"]')
+                        if element:
+                            self.driver.back()
+                            break
                     sleep(3+random.randint(0,2000)/1000)                     
                     #close
                     element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView/android.view.View[7]/android.view.View[2]/android.view.View/android.view.View')   
@@ -159,13 +164,11 @@ class  MiduAutomation(BaseOperation):
                 #Tencent ads union
                 self.keyboard.clickAPoint((60,45), (150,135))                      
                     
-    def watchvedios(self,number):
-        sleepseconds = 5
-        if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+    def watchvedios(self,number):  
+        if self.isFirst:
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()        
-        if random.randint(0,100)%2 == 0:
-            sleep(sleepseconds+random.randint(0,10000)/1000)
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()
         
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.RadioGroup/android.widget.RadioButton[3]')
@@ -231,7 +234,11 @@ if __name__ == '__main__':
     devices = [('DU2YYB14CL003271','4.4.2')]
     #devices = [('SAL0217A28001753','9')]
     devices = [('A7QDU18420000828','9')]  
-    #devices = [('SAL0217A28001753','9.1')]     
+    #devices = [('SAL0217A28001753','9.1')] 
+    #devices = [('ORL1193020723','9.1.1')]#Cupai 9
+    #devices = [('PBV0216C02008555','8.0')] #huawei P9
+    #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X
+    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X         
     for (deviceName,version) in devices:
         object = MiduAutomation(deviceName,version)
         t = threading.Thread(target=object.actAutomation(), args=(deviceName,version,))

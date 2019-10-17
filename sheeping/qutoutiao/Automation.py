@@ -18,6 +18,7 @@ from qutoutiao.kuaishouautomation import KuaiShouAutomation
 from qutoutiao.wechatautomation import WeChatAutomation
 from qutoutiao.kuaikandianautomation import KuaiKanDianAutomation
 from qutoutiao.miduautomation import MiduAutomation
+from qutoutiao.huoshanautomation import HuoShanAutomation
 
 from qutoutiao.quanminautomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
@@ -30,13 +31,14 @@ def SheepingDevices(device):
     start = time.time()    
     
     execs = []
-    kuaishoucount  =   50
+    kuaishoucount  =   100
     shuabaocount   =   2#+random.randint(0,10)
     kuaikandiancount = 50
     qutoutiaocount =   5#-4
     quanmincount =     5#-3
     wechatcount =      5
-    miducount=         200     
+    miducount=         175
+    huoshancount=      100         
                 
     overexecs = []
 
@@ -97,13 +99,21 @@ def SheepingDevices(device):
             auto.basecount = miducount+random.randint(0,50)            
             overexecs.append(auto)                       
         except Exception:    
-            print(sys.exc_info())                                   
+            print(sys.exc_info())   
+    for iter in range(4):
+        try:
+            auto=HuoShanAutomation(deviceName,version)
+            auto.basecount = huoshancount+random.randint(0,50)            
+            overexecs.append(auto)                       
+        except Exception:    
+            print(sys.exc_info())                                               
     np.random.shuffle(overexecs)
     
     execs.extend(overexecs)
-    for ex in execs:
-        ex.actAutomation()             
-            
+    while True:
+        for ex in execs:
+            ex.actAutomation()             
+        
     end = time.time()
     print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))               
             
