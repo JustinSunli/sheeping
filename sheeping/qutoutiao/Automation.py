@@ -31,14 +31,14 @@ def SheepingDevices(device):
     start = time.time()    
     
     execs = []
-    kuaishoucount  =   100
+    kuaishoucount  =   150
     shuabaocount   =   2#+random.randint(0,10)
     kuaikandiancount = 50
     qutoutiaocount =   5#-4
     quanmincount =     5#-3
     wechatcount =      5
-    miducount=         175
-    huoshancount=      100         
+    miducount=         100
+    huoshancount=      50         
                 
     overexecs = []
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     #SheepingDevices(device)
     #devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1'),('A7QDU18420000828','9.0'),('SAL0217A28001753','9.1')]
     devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1')]
-    
+    devices = [('UEUDU16B18012018', '7.0'), ('A7QDU18420000828', '9'), ('PBV0216C02008555', '8.0.0'), ('UEUDU17919005255', '8.0.0'), ('ORL1193020723', '9')]
     
     readDeviceId = list(os.popen('adb devices').readlines())
     devices=[]
@@ -144,9 +144,10 @@ if __name__ == '__main__':
         if len(codes)!=0:
             deviceName=codes[0]
               
-            versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
-            version = re.findall(r'(^.*)\n', versionoutput[0])[0]
-            devices.append((deviceName,version))
+#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+#             devices.append((deviceName,version))
+            devices.append((deviceName,""))
                  
     print('Parent process %s.' % os.getpid())
     p = Pool(len(devices))

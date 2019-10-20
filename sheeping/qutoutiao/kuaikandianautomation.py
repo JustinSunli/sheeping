@@ -69,7 +69,12 @@ class  KuaiKanDianAutomation(BaseOperation):
      
     def tearDown(self):
         self.driver.quit()    
-        
+    def sign(self):
+        element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='翻倍领取']")
+        if element:
+            element.click()
+            sleep(50+random.randint(0,5000)/1000)
+            self.driver.back() 
     def pullMoney(self):
         sleep(15+random.randint(0,2000)/1000)
         self.driver.back()
@@ -119,12 +124,15 @@ class  KuaiKanDianAutomation(BaseOperation):
               
             
     def watchvedios(self,number):
-        sleepseconds = 5
+        sleepseconds = 5    
         sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.sign()
         self.driver.back()
         sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.sign()
         self.driver.back()
         sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.sign()
         self.driver.back()
         
         #go to mini vedio
@@ -149,15 +157,48 @@ class  KuaiKanDianAutomation(BaseOperation):
             if(self.currentcount>self.basecount):
                 break
             
-        #sleep(sleepseconds+random.randint(0,10000)/1000)        
+        #sleep(sleepseconds+random.randint(0,10000)/1000) 
+        self.driver.back()
+        sleep(2+random.randint(0,10000)/1000)
+        self.driver.back()
         print()
+    def GotoMeAndView(self):
+        #go to mini vedio
+        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.yuncheapp.android.pearl:id/home_page_tab_bar']/android.widget.RelativeLayout[5]")        
+        if element:
+            element.click()  
+        else:
+            return        
+        sleepseconds = 5    
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.driver.back()
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.driver.back()
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='领取']")
+        if element:
+            element.click() 
+            sleep(1+random.randint(0,2000)/1000)       
         
+        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.yuncheapp.android.pearl:id/bg']")
+        if element:
+            element.click()
+            sleep(3+random.randint(0,3000)/1000)
+            #视察
+            self.keyboard.clickAPoint((825,1975), (1000,2035))
+            sleep(1+random.randint(0,2000)/1000)
+            #取钱
+            self.keyboard.clickAPoint((110,485), (190,535))
+            sleep(1+random.randint(0,2000)/1000)
+            #确认
+            self.keyboard.clickAPoint((400,1475), (700,1545))
+       
     def actAutomation(self):
         crashCount=0
         while(True):
             try:
                 self.init_driver()
                 self.watchvedios(self.basecount)
+                self.GotoMeAndView()
                 self.tearDown()
                 break
             except WebDriverException:
@@ -177,8 +218,10 @@ if __name__ == '__main__':
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
     devices = [('DU2YYB14CL003271','4.4.2')]
     devices = [('SAL0217A28001753','9.1')]
-    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X     
-    #devices = [('A7QDU18420000828','9')]  
+    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X  
+    devices = [('ORL1193020723','9.1.1')]#Cupai 9
+       
+    devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         kuaidiankan = KuaiKanDianAutomation(deviceName,version)
