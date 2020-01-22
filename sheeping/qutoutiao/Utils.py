@@ -60,7 +60,22 @@ class Utils:
         clickPointX = random.randint(resFromX,resToX)
         clickPointY = random.randint(resFromY,resToY)
         return (clickPointX,clickPointY)
+    
+    #honor6X
+    def getAPointX(self,x):
+        self.originalWidth6X = 1080
+        self.originalHeigth6X = 1920        
+        resX = math.floor( x / self.originalWidth6X * self.width )
+        return resX
+    
+    def getAPointY(self,y):
+        self.originalWidth6X = 1080
+        self.originalHeigth6X = 1920        
+        resY = math.floor( y / self.originalHeigth6X * self.width )
+        return resY    
         
+    
+    
     def centerPoint(self,fromPoint,toPoint):
         (fromX,fromY) = fromPoint
         (toX,toY) = toPoint

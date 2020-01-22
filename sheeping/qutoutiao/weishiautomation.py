@@ -1,6 +1,8 @@
 # coding: utf-8
+# 验证身份证
 from time import sleep
 from appium import webdriver
+from multiprocessing import Pool
 import re
 import time
 import os

@@ -20,6 +20,8 @@ import traceback
 from qutoutiao.baseoperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
+from multiprocessing import Pool
+
 
 #assii unicode
 from urllib.request import quote
@@ -38,6 +40,7 @@ class  KuaiKanDianAutomation(BaseOperation):
         # adb logcat -c // clear logs
         # adb logcat ActivityManager:I *:s
         
+        #driver.startActivity("com.kuaihuoyun.freight", ".KDLaunch");
 #
 
         self.deviceName=deviceName
@@ -212,7 +215,23 @@ class  KuaiKanDianAutomation(BaseOperation):
                 if crashCount > 5:
                     break                                        
                       
+def SheepingDevices(device):
+    (deviceName,version) = device    
+    print('Run task %s (%s)...' % (deviceName, os.getpid()))
+    start = time.time()
+    while(True):
+        try:
+            object = KuaiKanDianAutomation(deviceName,version)
+            object.actAutomation()
+            #Always execution 
+            break  
+        except Exception:    
+            print('phone session terminated!')
+            print(sys.exc_info()) 
 
+    end = time.time()
+    print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))  
+    
 if __name__ == '__main__':    
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
@@ -223,8 +242,23 @@ if __name__ == '__main__':
        
     devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]     
-    for (deviceName,version) in devices:
-        kuaidiankan = KuaiKanDianAutomation(deviceName,version)
-        t = threading.Thread(target=kuaidiankan.actAutomation(), args=(deviceName,version,))
-        t.start()
-        sleep(random.randint(0, 10000)/1000)
+    readDeviceId = list(os.popen('adb devices').readlines())
+    devices=[]
+    for outputline in readDeviceId:
+        codes = re.findall(r'(^\w*)\t', outputline)
+        if len(codes)!=0:
+            deviceName=codes[0]
+             
+#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+#             devices.append((deviceName,version))
+            devices.append((deviceName,""))
+            
+    print('Parent process %s.' % os.getpid())
+    p = Pool(len(devices))
+    for device in devices:
+        p.apply_async(SheepingDevices, args=(device,))
+        time.sleep(50)                
+    print('Waiting for all subprocesses done...')
+    p.close()
+    p.join() 

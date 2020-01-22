@@ -148,7 +148,8 @@ class  HuoShanAutomation(BaseOperation):
         if random.randint(0,100)%2 == 0:
             sleep(self.sleepseconds+random.randint(0,10000)/1000)
             self.driver.back()   
-        #self.keyboard.clickAPoint((248,534), (484,804))  
+        #choose one
+        self.keyboard.clickAPoint((248,534), (484,804))  
         
         self.sleepseconds = 5
         sleep(self.sleepseconds+random.randint(0,5000)/1000)

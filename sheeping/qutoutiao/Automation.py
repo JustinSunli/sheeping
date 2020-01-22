@@ -19,6 +19,7 @@ from qutoutiao.wechatautomation import WeChatAutomation
 from qutoutiao.kuaikandianautomation import KuaiKanDianAutomation
 from qutoutiao.miduautomation import MiduAutomation
 from qutoutiao.huoshanautomation import HuoShanAutomation
+from qutoutiao.xiangkanautomation import XiangKanAutomation
 
 from qutoutiao.quanminautomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
@@ -31,14 +32,15 @@ def SheepingDevices(device):
     start = time.time()    
     
     execs = []
-    kuaishoucount  =   150
+    kuaishoucount  =   100
     shuabaocount   =   2#+random.randint(0,10)
     kuaikandiancount = 50
     qutoutiaocount =   5#-4
     quanmincount =     5#-3
     wechatcount =      5
-    miducount=         100
-    huoshancount=      50         
+    miducount=         80
+    huoshancount=      50
+    xiangkancount=     30         
                 
     overexecs = []
 
@@ -57,13 +59,13 @@ def SheepingDevices(device):
             overexecs.append(auto)                          
         except Exception:    
             print(sys.exc_info())    
-    for iter in range(4):
-        try:
-            auto=KuaiShouAutomation(deviceName,version)
-            auto.basecount = kuaishoucount+random.randint(0,50)
-            overexecs.append(auto)                          
-        except Exception:    
-            print(sys.exc_info())
+#     for iter in range(4):
+#         try:
+#             auto=KuaiShouAutomation(deviceName,version)
+#             auto.basecount = kuaishoucount+random.randint(0,50)
+#             overexecs.append(auto)                          
+#         except Exception:    
+#             print(sys.exc_info())
  
     for iter in range(4):
         try:
@@ -106,7 +108,16 @@ def SheepingDevices(device):
             auto.basecount = huoshancount+random.randint(0,50)            
             overexecs.append(auto)                       
         except Exception:    
-            print(sys.exc_info())                                               
+            print(sys.exc_info())  
+    for iter in range(4):
+        try:
+            auto=XiangKanAutomation(deviceName,version)
+            auto.basecount = xiangkancount+random.randint(0,25)            
+            overexecs.append(auto)                       
+        except Exception:    
+            print(sys.exc_info())  
+
+                                                         
     np.random.shuffle(overexecs)
     
     execs.extend(overexecs)
@@ -114,6 +125,7 @@ def SheepingDevices(device):
         for ex in execs:
             ex.actAutomation()             
         
+        break
     end = time.time()
     print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))               
             
@@ -136,14 +148,14 @@ if __name__ == '__main__':
     #devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1'),('A7QDU18420000828','9.0'),('SAL0217A28001753','9.1')]
     devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1')]
     devices = [('UEUDU16B18012018', '7.0'), ('A7QDU18420000828', '9'), ('PBV0216C02008555', '8.0.0'), ('UEUDU17919005255', '8.0.0'), ('ORL1193020723', '9')]
-    
+     
     readDeviceId = list(os.popen('adb devices').readlines())
     devices=[]
     for outputline in readDeviceId:
         codes = re.findall(r'(^\w*)\t', outputline)
         if len(codes)!=0:
             deviceName=codes[0]
-              
+               
 #             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
 #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
 #             devices.append((deviceName,version))
@@ -153,7 +165,7 @@ if __name__ == '__main__':
     p = Pool(len(devices))
     for device in devices:
         p.apply_async(SheepingDevices, args=(device,))
-        time.sleep(50)        
+        time.sleep(30)        
     print('Waiting for all subprocesses done...')
     p.close()
     p.join()

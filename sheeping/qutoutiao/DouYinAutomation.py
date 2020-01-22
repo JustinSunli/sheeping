@@ -20,6 +20,8 @@ import traceback
 from qutoutiao.baseoperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
+from multiprocessing import Pool
+
 
 #assii unicode
 from urllib.request import quote

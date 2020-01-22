@@ -90,7 +90,7 @@ class  KuaiShouAutomation(BaseOperation):
             
             #sometimes pause
             if random.randint(0,1024) % 17 ==0:
-                sleep(sleepseconds+80+random.randint(0,15000)/1000)
+                sleep(sleepseconds+random.randint(0,15000)/1000)
             else:
                 sleep(sleepseconds+random.randint(0,15000)/1000)
             
@@ -101,6 +101,10 @@ class  KuaiShouAutomation(BaseOperation):
                     element.click()
                     sleep(random.randint(0,5000)/1000)
             
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
+            if element:
+                self.crack()
+            
             self.currentcount+=1
             if(self.currentcount>self.basecount):
                 break
@@ -109,15 +113,26 @@ class  KuaiShouAutomation(BaseOperation):
         if element:
             element.click()
             
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
+            if element:
+                self.crack()            
+            
             element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="立即签到"]')
             if element:
                 element.click()
                 self.driver.back()
             
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
+            if element:
+                self.crack()
+            
             element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="去签到"]')
             #self.find_element_by_id_without_exception(self.driver,'//android.view.View[contains(@text,"去签到")]')
             if element:
                 element.click()
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
+                if element:
+                    self.crack()                
                 self.driver.back()
 
             
@@ -169,9 +184,10 @@ if __name__ == '__main__':
 
     devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1')]
     #devices = [('ORL1193020723','9.1.1')]#Cupai 9
-    #devices = [('PBV0216C02008555','8.0')] #huawei P9
+    devices = [('PBV0216C02008555','8.0')] #huawei P9
     #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X
     #devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
+    #devices = [('UEUDU16B18012018', '7.0')]
     
     #devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]
@@ -187,7 +203,7 @@ if __name__ == '__main__':
     p = Pool(len(devices))
     for device in devices:
         p.apply_async(SheepingDevices, args=(device,))
-        time.sleep(100)                
+        time.sleep(30)                
     print('Waiting for all subprocesses done...')
     p.close()
     p.join()        

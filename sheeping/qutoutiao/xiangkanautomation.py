@@ -1,4 +1,5 @@
 # coding: utf-8
+# 验证身份证
 from time import sleep
 from appium import webdriver
 import traceback
@@ -8,6 +9,8 @@ import os
 import sys
 import random
 import threading
+from multiprocessing import Pool
+
 from qutoutiao import DriverSwipe
 from qutoutiao.baseoperation import BaseOperation 
 from qutoutiao import Utils
@@ -45,7 +48,7 @@ class XiangKanAutomation(BaseOperation):
         self.username=username
         self.password=password
 
-        self.basecount = 20
+        self.basecount = 40
         self.currentcount = 0   
         self.driver = None       
         
@@ -72,7 +75,13 @@ class XiangKanAutomation(BaseOperation):
         self.driver.quit()
                 
     def sign(self):
-        sleep(10+random.randint(0,5000)/1000)        
+#         sleepseconds=5
+#         sleep(sleepseconds+random.randint(0,5000)/1000)
+#         self.driver.back()
+#         sleep(sleepseconds+random.randint(0,5000)/1000)
+#         self.driver.back()        
+#         sleep(sleepseconds+random.randint(0,5000)/1000)
+#         self.driver.back()                   
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="签到"]')
         if element:
             element.click()
@@ -86,7 +95,8 @@ class XiangKanAutomation(BaseOperation):
     def readAArticle(self):
         try:
             #
-            for iter in range(random.randint(8,15)):
+            for iter in range(random.randint(20,29)):
+            #for iter in range(random.randint(5,9)):
                 sleep(5+random.randint(0,5000)/1000)
                 self.driverSwipe.SwipeUpALittle()
                 self.clickMe()
@@ -100,6 +110,12 @@ class XiangKanAutomation(BaseOperation):
         self.driver.back()
         
     def clickMe(self):
+        sleep(1+random.randint(0,2000)/1000)
+        element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.ImageView[@resource-id='com.xiangkan.android:id/fudai_icon']")
+        if element:
+            element.click()
+            sleep(1+random.randint(0,2000)/1000)
+
         sleep(3+random.randint(0,5000)/1000)        
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='继续阅读']")
         if element:
@@ -111,19 +127,19 @@ class XiangKanAutomation(BaseOperation):
         sleep(10+random.randint(0,5000)/1000) 
         #com.xiangkan.android:id/tv_tab_title
         try:
-            element = self.driver.find_element_by_xpath("//android.widget.TextView[@text='首页']")
+            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='首页']")
             if element:
                 element.click() 
         except NoSuchElementException:
             self.driver.back()
-            element = self.driver.find_element_by_xpath("//android.widget.TextView[@text='首页']")
+            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='首页']")
             if element:
                 element.click()                 
         #
         times = random.randint(2,6)
         for inter in range(times):
             self.driverSwipe.SwipeUpALittle()
-            sleep(random.randint(0,5000)/1000)
+            sleep(random.randint(500,3000)/1000)
         
     def readArticles(self, number):
         sleep(10+random.randint(0,5000)/1000)                
@@ -132,7 +148,7 @@ class XiangKanAutomation(BaseOperation):
         
         for iter in range(number): 
             self.clickMe()           
-            elements = self.find_elements_by_xpath_without_exception(self.driver,"//androidx.viewpager.widget.ViewPager/android.widget.FrameLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup/android.widget.TextView")
+            elements = self.driver.find_elements_by_xpath("//androidx.viewpager.widget.ViewPager/android.widget.FrameLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup/android.widget.TextView")
             if len(elements) ==0:
                 self.clickMe()
                 self.headPageRefreshSwipeDown()
@@ -212,13 +228,47 @@ class XiangKanAutomation(BaseOperation):
                 if crashCount > 5:
                     break                         
 
+def SheepingDevices(device):
+    (deviceName,version) = device    
+    print('Run task %s (%s)...' % (deviceName, os.getpid()))
+    start = time.time()
+    while(True):
+        try:
+            object = XiangKanAutomation(deviceName,version)
+            object.actAutomation()
+            #Always execution 
+            break  
+        except Exception:    
+            print('phone session terminated!')
+            print(sys.exc_info()) 
+
+    end = time.time()
+    print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))    
+
 if __name__ == '__main__':   
     devices = [('DU2YYB14CL003271','4.4.2')]#,('A7QDU18420000828','9'),('SAL0217A28001753','9')]     
     devices = [('SAL0217A28001753','9')]
     devices = [('A7QDU18420000828','9')]
-    for (deviceName,version) in devices:
-        auto = XiangKanAutomation(deviceName,version)
-        t = threading.Thread(target=auto.actAutomation(), args=())
-        t.start()
-        sleep(random.randint(0, 10))
+    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
+    
+    readDeviceId = list(os.popen('adb devices').readlines())
+    devices=[]
+    for outputline in readDeviceId:
+        codes = re.findall(r'(^\w*)\t', outputline)
+        if len(codes)!=0:
+            deviceName=codes[0]
+             
+#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+#             devices.append((deviceName,version))
+            devices.append((deviceName,""))
+            
+    print('Parent process %s.' % os.getpid())
+    p = Pool(len(devices))
+    for device in devices:
+        p.apply_async(SheepingDevices, args=(device,))
+        time.sleep(50)                
+    print('Waiting for all subprocesses done...')
+    p.close()
+    p.join() 
         

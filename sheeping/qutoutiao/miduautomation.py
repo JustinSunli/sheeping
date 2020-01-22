@@ -45,7 +45,7 @@ class  MiduAutomation(BaseOperation):
         self.version=version
         self.username=username
         self.password=password
-        self.basecount = 200
+        self.basecount = 20
         self.currentcount = 0  
         self.driver = None   
         
@@ -77,11 +77,13 @@ class  MiduAutomation(BaseOperation):
     def sign(self):        
         #if self.isFirst:
         sleep(self.sleepseconds+random.randint(0,10000)/1000)
-        self.driver.back()        
+        self.driver.back()   
+        sleep(self.sleepseconds+random.randint(0,10000)/1000)
+        self.driver.back()             
         sleep(self.sleepseconds+random.randint(0,10000)/1000)
         self.driver.back()
         #    self.isFirst = False
-        
+        self.crack()
         #福利
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.RadioGroup/android.widget.RadioButton[4]')
         if element:
@@ -95,8 +97,13 @@ class  MiduAutomation(BaseOperation):
                 if element:
                     element.click()
                 else:
-                    return                
-            
+                    return   
+        if self.isFirst:                             
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
+            self.driver.back()
+            sleep(self.sleepseconds+random.randint(0,10000)/1000)
+            self.driver.back()   
+            self.isFirst=False                 
         #sign                    
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="签到"]')
         if element:
@@ -237,8 +244,23 @@ class  MiduAutomation(BaseOperation):
                 sleep(40+random.randint(0,5000)/1000)  
                 self.closeAddsWindow()
                 sleep(1+random.randint(0,2000)/1000)                   
+
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="这本书的读者都在看"]')
+            if element:
+                elements = self.find_elements_by_xpath_without_exception(self.driver,'//android.support.v7.widget.RecyclerView/android.view.ViewGroup')
+                index = random.randint(0,len(elements)-1)
+                element = elements[index]
+                element.click()
                 
-                        
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="加入书架"]')
+                if element:
+                    element.click()
+                
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="立即阅读"]')
+                if element:
+                    element.click()
+                    sleep(1+random.randint(0,2000)/1000)
+                     
             if random.randint(0,100) % 2 ==0:
                 self.keyboard.clickAPoint((945,174), (1045,206))  
             else:
@@ -311,25 +333,25 @@ def SheepingDevices(device):
                     
 if __name__ == '__main__':   
     devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1')]
-    #devices = [('ORL1193020723','9.1.1')]#Cupai 9
+    devices = [('ORL1193020723','9.1.1')]#Cupai 9
     #devices = [('PBV0216C02008555','8.0')] #huawei P9
     #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X
     #devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
-    #devices = [('A7QDU18420000828','9')]  
+    devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]
        
       
-    readDeviceId = list(os.popen('adb devices').readlines())
-    devices=[]
-    for outputline in readDeviceId:
-        codes = re.findall(r'(^\w*)\t', outputline)
-        if len(codes)!=0:
-            deviceName=codes[0]
-            
-#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
-#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
-#             devices.append((deviceName,version))
-            devices.append((deviceName,""))
+#     readDeviceId = list(os.popen('adb devices').readlines())
+#     devices=[]
+#     for outputline in readDeviceId:
+#         codes = re.findall(r'(^\w*)\t', outputline)
+#         if len(codes)!=0:
+#             deviceName=codes[0]
+#              
+# #             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+# #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+# #             devices.append((deviceName,version))
+#             devices.append((deviceName,""))
             
     print('Parent process %s.' % os.getpid())
     p = Pool(len(devices))

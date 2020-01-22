@@ -14,14 +14,12 @@ from qutoutiao import Utils
 from qutoutiao import keyboards
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
-from multiprocessing import Pool
 
 
 
-
-class QutoutiaoAutomation(BaseOperation):
+class TaoXinwenAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
-        super(QutoutiaoAutomation,self).__init__()
+        super(TaoXinwenAutomation,self).__init__()
         # 空间坐标 打开手机--设置--开发者选项---指针位置-启动后，你手动触摸那个webview元素，手机的上方会显示（x，y）坐标 
         
         #adb not found
@@ -47,7 +45,7 @@ class QutoutiaoAutomation(BaseOperation):
         self.username=username
         self.password=password
 
-        self.basecount = 10
+        self.basecount = 20
         self.currentcount = 0   
         self.driver = None       
         
@@ -59,11 +57,11 @@ class QutoutiaoAutomation(BaseOperation):
         desired_caps['platformName'] = 'Android'
         desired_caps['platformVersion'] = self.version
         desired_caps['deviceName'] = self.deviceName
-        desired_caps['appPackage'] = 'com.jifen.qukan'
+        desired_caps['appPackage'] = 'com.coohua.xinwenzhuan'
         desired_caps['noReset'] = True
         desired_caps['udid'] = self.deviceName
         desired_caps['newCommandTimeout'] = 600 #default 60 otherwise quit automatically
-        desired_caps['appActivity'] = 'com.jifen.qkbase.main.MainActivity'
+        desired_caps['appActivity'] = 'com.coohua.xinwenzhuan.controller.MainActivity'
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(3) #wait time when not find element
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
@@ -72,149 +70,95 @@ class QutoutiaoAutomation(BaseOperation):
      
     def tearDown(self):
         self.driver.quit()
-
-
-        
-
-    def findWilliam(self):
-        sleep(random.randint(0,5000)/1000)
-        # go to me
-        self.driver.find_element_by_id('com.jifen.qukan:id/mb').click()
-        sleep(random.randint(0,5000)/1000)
-        
-        self.driver.find_elements_by_xpath("//android.support.v7.widget.RecyclerView/android.widget.LinearLayout/android.widget.TextView").get(0).send_keys(self.username)
-        self.driver.find_elements_by_xpath("//android.support.v7.widget.RecyclerView/android.widget.LinearLayout/android.widget.TextView").get(1).send_keys(self.password)
-        sleep(random.randint(0,5000)/1000)
-        
-        element = self.driver.find_element_by_xpath("//android.widget.Button[contains(text(),'{}')]".format('登录'))
-        element.click()
-        sleep(random.randint(0,5000)/1000)
-        
-    def logout(self):
-        # go to me
-        self.driver.find_element_by_id('com.jifen.qukan:id/mb').click()
-        sleep(random.randint(0,5000)/1000)
-        
-        # go to setting
-        while(True):
-            sleep(random.randint(0,5000)/1000)
-            self.driverSwipe.swipeDown()
-            element = self.driver.find_element_by_xpath("//android.widget.TextView[contains(text(),'{}')]".format('设置'))
-            if element:
-                element.click()
-                break
-
-        # go to exit
-        while(True):
-            sleep(random.randint(0,5000)/1000)
-            self.driverSwipe.swipeDown()
-            element = self.driver.find_element_by_xpath("//android.widget.Button[contains(text(),'{}')]".format('退出登录'))
-            if element:
-                element.click()
-                break
                 
     def sign(self):
-        
-        element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.TextView[@text="领取"]')
+        sleepseconds=5
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.driver.back()
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.driver.back()        
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.driver.back()         
+        element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.HorizontalScrollView/android.widget.LinearLayout/android.support.v7.app.ActionBar$Tab[4]')
         if element:
             element.click()
+            sleep(random.randint(0,3000)/1000)
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="领取奖励"]')
+            if element:
+                element.click()            
         
         sleep(random.randint(0,5000)/1000)
-        # sign in
-        self.keyboard.clickAPoint((648,2019), (864,2160))
-#         element=self.find_element_by_id_without_exception(self.driver,'com.jifen.qukan:id/mc')
-#         if element:
-#             element.click()
-            
-        sleep(random.randint(0,5000)/1000)  
-        #self.driverSwipe.AdbSwipeLeft()
-        #sleep(random.randint(0,5000)/1000)  
-        #self.driverSwipe.AdbSwipeLeft()      
         
-    def readAArticle(self, comments):
+    def readAArticle(self):
         try:
             #
-            for iter in range(random.randint(5,7)):
-                sleep(10+random.randint(0,10000)/1000)
+            for iter in range(random.randint(6,12)):
+                sleep(5+random.randint(0,5000)/1000)
                 self.driverSwipe.SwipeUpALittle()
                 self.clickMe()
-            
-#             self.driver.find_element_by_id('com.jifen.qukan:id/b9e').click()
-#             sleep(random.randint(0,5000)/1000)
-#             self.driver.find_element_by_id('com.jifen.qukan:id/vw').send_keys(comments)
-#             sleep(random.randint(0,5000)/1000)
-#             self.driver.find_element_by_id('com.jifen.qukan:id/vz').click()
-            
+                
+            self.driver.back()           
             self.articleCount+=1
         except Exception:
-            print('read article exception')
             traceback.print_exc() 
-            #self.driver.back()
             return
         
         self.driver.back()
         
-        
-#     def timeBonus(self):
-#         try:
-#             sleep(3+random.randint(0,5000)/1000)        
-#             element = self.find_element_by_id_without_exception(self.driver,'com.jifen.qukan:id/a7q')
-#             if element:
-#                 element.click()
-#             
-#             sleep(3+random.randint(0,5000)/1000)
-#             element = self.find_element_by_id_without_exception(self.driver,'com.jifen.qukan:id/a4d')
-#             if element:
-#                 element.click()
-#                 
-#         except Exception as e:
-#             traceback.print_exc()            
-#             return
     def clickMe(self):
-        
-        sleep(3+random.randint(0,5000)/1000)        
-        element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.RelativeLayout/android.widget.ImageView')
+        sleep(1+random.randint(0,2000)/1000)
+        element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.ImageView[@resource-id='com.xiangkan.android:id/fudai_icon']")
         if element:
             element.click()
-        
-            sleep(40+random.randint(0,5000)/1000)
-            
-            self.driver.back()
-        
+            sleep(1+random.randint(0,2000)/1000)
+
+        sleep(3+random.randint(0,5000)/1000)        
+        element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='继续阅读']")
+        if element:
+            element.click()
+            sleep(1+random.randint(0,2000)/1000)
                              
     def headPageRefreshSwipeDown(self):
-        # go to toutiao
-        self.keyboard.clickAPoint((0,2019), (216,2160))
-
-#         element=self.find_element_by_id_without_exception(self.driver, 'com.jifen.qukan:id/m9')
-#         if element:
-#             element.click()
-        #self.timeBonus();
-        times = random.randint(5,8)
+        #Go to header page
+        sleep(10+random.randint(0,5000)/1000) 
+        #com.xiangkan.android:id/tv_tab_title
+        try:
+            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='首页']")
+            if element:
+                element.click() 
+        except NoSuchElementException:
+            self.driver.back()
+            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='首页']")
+            if element:
+                element.click()                 
+        #
+        times = random.randint(2,6)
         for inter in range(times):
             self.driverSwipe.SwipeUpALittle()
-            sleep(random.randint(0,5000)/1000)
-            #
+            sleep(random.randint(500,3000)/1000)
         
     def readArticles(self, number):
-                
+        sleep(10+random.randint(0,5000)/1000)                
         self.headPageRefreshSwipeDown()
         sleep(random.randint(0,5000)/1000)
-        self.driverSwipe.SwipeLeft()
         
-        
-        for iter in range(number):            
-            elements = self.driver.find_elements_by_xpath("//android.support.v7.widget.RecyclerView/android.widget.LinearLayout/android.widget.TextView")
+        for iter in range(number): 
+            self.clickMe()           
+            elements = self.driver.find_elements_by_xpath("//androidx.viewpager.widget.ViewPager/android.widget.FrameLayout/android.widget.FrameLayout/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup/android.widget.TextView")
             if len(elements) ==0:
+                self.clickMe()
                 self.headPageRefreshSwipeDown()
                 continue
-            index = 0
-            if len(elements)>1:
-                index = random.randint(0,len(elements)-1)
-            elements[index].click()
-            self.readAArticle('14亿中国人，14亿护旗手')
+            if len(elements) <= 1:
+                continue
             
-            self.driver.back()
+            index = 0
+            if len(elements) > 1:
+                index = random.randint(1,len(elements)-1)
+            elements[index].click()
+            
+            self.readAArticle()
+            #self.driver.back()
             #refresh
             self.headPageRefreshSwipeDown()
             
@@ -265,7 +209,7 @@ class QutoutiaoAutomation(BaseOperation):
             try:
                 self.init_driver()
                 self.sign()
-                self.watchVedios(random.randint(0,3))
+                #self.watchVedios(random.randint(0,3))
                 self.readArticles(self.basecount+random.randint(0,2))
                 self.tearDown()
                 break
@@ -284,9 +228,11 @@ if __name__ == '__main__':
     devices = [('DU2YYB14CL003271','4.4.2')]#,('A7QDU18420000828','9'),('SAL0217A28001753','9')]     
     devices = [('SAL0217A28001753','9')]
     devices = [('A7QDU18420000828','9')]
+    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
+    
     for (deviceName,version) in devices:
-        qutoutiao = QutoutiaoAutomation(deviceName,version)
-        t = threading.Thread(target=qutoutiao.actAutomation(), args=())
+        auto = TaoXinwenAutomation(deviceName,version)
+        t = threading.Thread(target=auto.actAutomation(), args=())
         t.start()
         sleep(random.randint(0, 10))
         
