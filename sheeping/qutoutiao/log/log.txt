@@ -1,0 +1,2 @@
+{"tag": "function", "depth": 1, "time": 1582630382.467886, "data": {"name": "sleep", "call_args": {"secs": 9.626000000000001}, "start_time": 1582630372.8395176, "ret": null, "end_time": 1582630382.467886}}
+{"tag": "function", "depth": 1, "time": 1582630391.743274, "data": {"name": "sleep", "call_args": {"secs": 8.902000000000001}, "start_time": 1582630382.8388638, "ret": null, "end_time": 1582630391.743274}}

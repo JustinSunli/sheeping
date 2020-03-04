@@ -450,7 +450,7 @@ class  QujianpanAutomation(BaseOperation):
             traceback.print_exc()     
                     
     def actAutomation(self):
-        self.startTime = time.time()
+        self.stat.startTime = time.time()
         crashCount=0
         while(True):
             try:
@@ -486,7 +486,7 @@ class  QujianpanAutomation(BaseOperation):
                 if crashCount > 10:
                     break                             
 
-        self.endTime = time.time()
+        self.stat.endTime = time.time()
 if __name__ == '__main__':    
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]

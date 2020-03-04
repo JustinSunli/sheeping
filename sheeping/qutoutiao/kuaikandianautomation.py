@@ -21,6 +21,8 @@ from qutoutiao.baseoperation import BaseOperation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from multiprocessing import Pool
+from airtest.core.api import *
+from airtest.cli.parser import cli_setup
 
 
 #assii unicode
@@ -49,7 +51,7 @@ class  KuaiKanDianAutomation(BaseOperation):
         self.password=password
         self.driver = None
           
-        self.basecount = 5
+        self.basecount = 10
         self.currentcount = 0              
 #         
 #         self.username = username
@@ -69,6 +71,11 @@ class  KuaiKanDianAutomation(BaseOperation):
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
         self.util = Utils.Utils(self.driver)
         self.keyboard = keyboards.KeyBoards(self.driver)
+        
+        if not cli_setup():
+            auto_setup(__file__, logdir=True, devices=[
+                    "Android://127.0.0.1:5037/"+self.deviceName,
+            ])
      
     def tearDown(self):
         self.driver.quit()    
@@ -78,6 +85,7 @@ class  KuaiKanDianAutomation(BaseOperation):
             element.click()
             sleep(50+random.randint(0,5000)/1000)
             self.driver.back() 
+            
     def pullMoney(self):
         sleep(15+random.randint(0,2000)/1000)
         self.driver.back()
@@ -101,32 +109,55 @@ class  KuaiKanDianAutomation(BaseOperation):
         
         
     def clickMe(self):
-
-        
         sleep(1+random.randint(0,3000)/1000)   
-        #like the vedio
-        if random.randint(0,125) % 5 ==0: 
-            self.keyboard.clickAPoint((910,1075), (1000,1170))
-            sleep(3+random.randint(0,3000)/1000)
-            self.driver.back()
+        #click the lucky buddle
+        atime = time.time()
+        point = exists(Template(r"..\imagesrc\tpl1580639597105.png",threshold=0.8))
+        if point: 
+            #click the lucky bubble
+            #touch(Template(r"imagesrc/tpl1580639597105.png", record_pos=(0.39, -0.164), resolution=(1080, 2160)))                  
+            element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/timer_anchor')
+            if element :
+                element.click()  
+            else:
+                self.stat.executionStatus = True
+                touch(point)
+                #return          
+            
+            #self.keyboard.clickAPoint((910,1075), (1000,1170))
             sleep(1+random.randint(0,3000)/1000)
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="翻倍领取"]')
+            if element:
+                element.click()
+                #watch the ads
+                sleep(35+random.randint(0,3000)/1000)
+                self.driver.back()
+                #get the money
+                element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="收入囊中"]')
+                if element:
+                    element.click()
+            else:
+                self.driver.back()
                 
-#         element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/timer_anchor')
-#         if element:
-#             element.click()
+            sleep(1+random.randint(0,3000)/1000)
+        
+        btime = time.time()
+        print(btime-atime)
+
 #             sleep(3+random.randint(0,3000)/1000)
 #             self.driver.back()
 #             sleep(1+random.randint(0,3000)/1000)  
         #like the vedio
         if random.randint(0,125) % 3 ==0:
-#             element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/like_icon')
-#             if element:
-#                 element.click()
-            self.keyboard.clickAPoint((927,1750), (985,1782))
+            element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/like_icon')
+            if element:
+                element.click()
+
             sleep(random.randint(0,5000)/1000)            
               
             
     def watchvedios(self,number):
+        #keyevent("BACK")
         sleepseconds = 5    
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.sign()
@@ -139,13 +170,13 @@ class  KuaiKanDianAutomation(BaseOperation):
         self.driver.back()
         
         #go to mini vedio
-        self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.yuncheapp.android.pearl:id/home_page_tab_bar']/android.widget.RelativeLayout[4]").click()
+        self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.yuncheapp.android.pearl:id/home_page_tab_bar']/android.widget.RelativeLayout[3]").click()
 
         #choose one
         #sleep(10+random.randint(0,5000)/1000)
-        self.keyboard.clickAPoint((0,205), (537,1159))
+        #self.keyboard.clickAPoint((0,205), (537,1159))
         
-        sleepseconds = 10
+        sleepseconds = 1
         sleep(sleepseconds+random.randint(0,10000)/1000)
         for iter in range(number):
             self.driverSwipe.SwipeUp()
@@ -166,36 +197,90 @@ class  KuaiKanDianAutomation(BaseOperation):
         self.driver.back()
         print()
     def GotoMeAndView(self):
-        #go to mini vedio
+        #Go to me
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.yuncheapp.android.pearl:id/home_page_tab_bar']/android.widget.RelativeLayout[5]")        
         if element:
-            element.click()  
+            element.click()             
         else:
-            return        
+            self.stat.executionStatus = True
+            return 
+               
         sleepseconds = 5    
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
+        
+        #
+        #time bonus
         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='领取']")
         if element:
             element.click() 
-            sleep(1+random.randint(0,2000)/1000)       
+            sleep(1+random.randint(0,2000)/1000)
+        #watch ads to double the time bonus
+        element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/rl_time')
+        if element:
+            element.click()
+            sleep(30+random.randint(0,3000)/1000)
+            self.closeAddsWindow()
+            sleep(1+random.randint(0,2000)/1000)
         
+        #watch the signon ads and get the money
+        element = self.find_element_by_id_without_exception(self.driver,'com.yuncheapp.android.pearl:id/reward_ad_iv')
+        if element:
+            element.click()
+            sleep(30+random.randint(0,3000)/1000)
+            self.closeAddsWindow()
+            self.driver.back()
+            sleep(1+random.randint(0,2000)/1000)
+        
+        #bank little game
+#         if random.randint(0,199) % 3 !=0:
+#             return
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.yuncheapp.android.pearl:id/bg']")
         if element:
             element.click()
             sleep(3+random.randint(0,3000)/1000)
             #视察
-            self.keyboard.clickAPoint((825,1975), (1000,2035))
+            #self.keyboard.clickAPoint((825,1975), (1000,2035))
+            touch(Template(r"..\imagesrc\tpl1580724339415.png",threshold=0.8))
             sleep(1+random.randint(0,2000)/1000)
             #取钱
-            self.keyboard.clickAPoint((110,485), (190,535))
+            #self.keyboard.clickAPoint((110,485), (190,535))
+            touch(Template(r"..\imagesrc\tpl1580645988112.png",threshold=0.8))
+            sleep(1+random.randint(0,2000)/1000)
+            
+            #看视频确认
+            touch(Template(r"..\imagesrc\tpl1580646026352.png",threshold=0.8))            
+            self.closeAddsWindow()
+            self.driver.back()
             sleep(1+random.randint(0,2000)/1000)
             #确认
-            self.keyboard.clickAPoint((400,1475), (700,1545))
-       
+        
+        element=self.find_element_by_id_without_exception(self.driver, "com.yuncheapp.android.pearl:id/today_gold']")
+        if element:  
+            self.stat.dailyMoney = element.text()        
+        
+        element=self.find_element_by_id_without_exception(self.driver, "com.yuncheapp.android.pearl:id/my_gold']")
+        if element:  
+            self.stat.currentMoney = element.text()  
+                  
+    def closeAddsWindow(self):
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭广告')]")
+        if element:
+            element.click()
+            return
+        
+        element = self.find_element_by_id_without_exception(self.driver, 'com.yuncheapp.android.pearl:id/tt_video_ad_close_layout')
+        if element:
+            element.click()
+        else:
+            self.driver.back()
+            return   
+                       
     def actAutomation(self):
+        self.stat.startTime = time.time()
+
         crashCount=0
         while(True):
             try:
@@ -213,7 +298,9 @@ class  KuaiKanDianAutomation(BaseOperation):
                     self.tearDown() 
                 crashCount+=1                    
                 if crashCount > 5:
-                    break                                        
+                    break  
+        self.stat.endTime = time.time()
+                                                      
                       
 def SheepingDevices(device):
     (deviceName,version) = device    
@@ -242,19 +329,19 @@ if __name__ == '__main__':
        
     devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]     
-    readDeviceId = list(os.popen('adb devices').readlines())
-    devices=[]
-    for outputline in readDeviceId:
-        codes = re.findall(r'(^\w*)\t', outputline)
-        if len(codes)!=0:
-            deviceName=codes[0]
-             
-#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
-#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
-#             devices.append((deviceName,version))
-            devices.append((deviceName,""))
-            
-    print('Parent process %s.' % os.getpid())
+#     readDeviceId = list(os.popen('adb devices').readlines())
+#     devices=[]
+#     for outputline in readDeviceId:
+#         codes = re.findall(r'(^\w*)\t', outputline)
+#         if len(codes)!=0:
+#             deviceName=codes[0]
+#              
+# #             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+# #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+# #             devices.append((deviceName,version))
+#             devices.append((deviceName,""))
+#             
+#     print('Parent process %s.' % os.getpid())
     p = Pool(len(devices))
     for device in devices:
         p.apply_async(SheepingDevices, args=(device,))

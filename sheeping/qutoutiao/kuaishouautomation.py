@@ -21,6 +21,7 @@ import traceback
 from qutoutiao.baseoperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver import ActionChains
 
 #assii unicode
 from urllib.request import quote
@@ -74,6 +75,9 @@ class  KuaiShouAutomation(BaseOperation):
     def watchvedios(self,number):
         sleepseconds=5
         sleep(sleepseconds+random.randint(0,5000)/1000)
+        element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
+        if element:
+            self.crack()        
         self.driver.back()
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()        
@@ -189,8 +193,8 @@ if __name__ == '__main__':
     #devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
     #devices = [('UEUDU16B18012018', '7.0')]
     
-    #devices = [('A7QDU18420000828','9')]  
-    #devices = [('SAL0217A28001753','9.1')]
+    devices = [('A7QDU18420000828','9')]  
+    devices = [('SAL0217A28001753','9.1')]
        
       
 #     for (deviceName,version) in devices:

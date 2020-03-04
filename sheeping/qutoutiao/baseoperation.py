@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import sys
+from appium.webdriver.common.touch_action import TouchAction
 
 
 class AutomationException(Exception):
@@ -18,18 +19,33 @@ class AutomationException(Exception):
     def __init__(self,message):
         Exception.__init__(self)
         self.message=message
-     
+        
+class ExecutionStatistics:
+    def __init__(self):
+        
+        self.startMoney = 0
+        self.endMoney = 0
+        self.startTime = 0
+        self.endTime = 0
+        self.executionStatus = False 
+        self.currentMoney = 0
+        self.dailyMoney = 0
+        self.dailyTotalTime = 0
+        self.lastExecutionTime = 0
+
+
 class BaseOperation:   
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
        self.isFirst = True
        self.sleepseconds = 5
        self.driver = None
        self.util = None
-       self.startMoney = 0
-       self.endMoney = 0
        
-       self.startTime = 0
-       self.endTime = 0 
+       self.stat = ExecutionStatistics()
+       self.stat.startMoney = 0
+       self.stat.endMoney = 0
+       self.stat.startTime = 0
+       self.stat.endTime = 0 
     
     def get_snap(self):
         """
@@ -178,7 +194,7 @@ class BaseOperation:
         #image = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="captcha"]/android.view.View/android.widget.Image[1]')
         image=self.get_image()
         # 步骤四：拿到Box图片位置
-        box = self.find_element_by_xpath_without_exception(self.driver, '//android.view.View[@text="captcha"]/android.view.View/android.widget.Image[2]')
+        box = self.find_element_by_xpath_without_exception(self.driver, '//android.view.View[@text="captcha"]/android.view.View/android.view.View/android.widget.Image[2]')
         if not box:
             return 
         location = box.location
@@ -195,32 +211,36 @@ class BaseOperation:
         tracks = self.get_tracks(distance)
 
         # 步骤八：按照轨迹拖动，完成验证
-        slider = self.find_element_by_xpath_without_exception(self.driver, '//android.view.View[@text="captcha"]/android.view.View[2]/android.view.View[2]')
+        slider = self.find_element_by_xpath_without_exception(self.driver, '//android.view.View[@text="captcha"]/android.view.View/android.view.View[2]/android.view.View[2]/android.view.View')
         if not slider:
             return
         #button = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
-        ActionChains(self.driver).click_and_hold(slider).perform()
+        #TouchAction(self.driver).long_press(element).move_to(x=0, y=10).release().perform()
+        x1 = slider.location['x']
+        y1 = slider.location['y']
+        action=TouchAction(self.driver).long_press(slider)
 
         # 正常人类总是自信满满地开始正向滑动，自信地表现是疯狂加速
         for track in tracks['forward_tracks']:
-            ActionChains(self.driver).move_by_offset(xoffset=track, yoffset=0).perform()
+            action=action.move_to(x=x1+track, y=y1)
+            x1+=track
 
         # 结果傻逼了，正常的人类停顿了一下，回过神来发现，卧槽，滑过了,然后开始反向滑动
-        sleep(0.6)
+        action=action.wait(600)
         for back_track in tracks['back_tracks']:
-            ActionChains(self.driver).move_by_offset(xoffset=back_track, yoffset=0).perform()
+            action=action.move_to(x=x1+back_track, y=y1)
+            x1+=back_track
 
         # 小范围震荡一下，进一步迷惑极验后台，这一步可以极大地提高成功率
-        sleep(0.3)
-        ActionChains(self.driver).move_by_offset(xoffset=3, yoffset=0).perform()  # 先移动去一点
-        sleep(0.4)
-        ActionChains(self.driver).move_by_offset(xoffset=-3, yoffset=0).perform()  # 再退回来，模仿人的行为习惯
+        action=action.wait(300)
+        action=action.move_to(x=x1 +3, y=y1)  # 先移动去一点
+        action=action.wait(400)
+        action=action.move_to(x=x1 -3, y=y1) # 再退回来，模仿人的行为习惯
 
-        sleep(0.6)  # 0.6秒后释放鼠标
-        ActionChains(self.driver).release().perform()
-        sleep(0.6)  # 0.6秒后释放鼠标
+        action=action.wait(600)  # 0.6秒后释放鼠标
+        action.release().perform()
         
-
+        sleep(0.6)  # 0.6秒后释放鼠标
         try:
             success = self.wait.until(
                 EC.text_to_be_present_in_element((By.XPATH, '//'), '验证成功'))
