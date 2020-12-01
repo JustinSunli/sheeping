@@ -1,4 +1,11 @@
 # coding: utf-8
+import sys
+import os
+curPath = os.path.abspath(os.path.dirname(__file__))
+rootPath = os.path.split(curPath)[0]
+sys.path.append(rootPath)
+
+
 from time import sleep
 from appium import webdriver
 import re
@@ -21,12 +28,14 @@ from qutoutiao.baseoperation import BaseOperation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from multiprocessing import Pool
-from airtest.core.api import *
-from airtest.cli.parser import cli_setup
+# from airtest.core.api import *
+# from airtest.cli.parser import cli_setup
 from appium.webdriver.common.touch_action import TouchAction
 #from selenium.webdriver import ActionChains
 from selenium.webdriver.common.action_chains import ActionChains
 
+import threading
+import time
 
 
 #assii unicode
@@ -80,10 +89,10 @@ class  TouTiaoAutomation(BaseOperation):
         self.util = Utils.Utils(self.driver)
         self.keyboard = keyboards.KeyBoards(self.driver)
         
-        if not cli_setup():
-            auto_setup(__file__, logdir=True, devices=[
-                    "Android://127.0.0.1:5037/"+self.deviceName,
-            ])
+#         if not cli_setup():
+#             auto_setup(__file__, logdir=True, devices=[
+#                     "Android://127.0.0.1:5037/"+self.deviceName,
+#             ])
      
     def tearDown(self):
         self.driver.quit()    
@@ -261,6 +270,7 @@ class  TouTiaoAutomation(BaseOperation):
                     break  
         self.stat.endTime = time.time()
                                                       
+
                       
 def SheepingDevices(device):
     (deviceName,version) = device    
@@ -279,6 +289,13 @@ def SheepingDevices(device):
     end = time.time()
     print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))  
     
+class AutomationThread (threading.Thread):
+    def __init__(self, device):
+        threading.Thread.__init__(self)
+        self.device = device 
+    def run(self):
+        SheepingDevices(self.device)
+    
 if __name__ == '__main__':    
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
@@ -287,7 +304,7 @@ if __name__ == '__main__':
     devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X  
     devices = [('ORL1193020723','9.1.1')]#Cupai 9
        
-    devices = [('A7QDU18420000828','9')]  
+    devices = [('A7QDU18420000828','9'),('SAL0217A28001753','9')]  
     #devices = [('SAL0217A28001753','9.1')]   
     
     #devices = [('TUKDU18108020017','9')] 
@@ -304,10 +321,16 @@ if __name__ == '__main__':
 #             devices.append((deviceName,""))
 #             
 #     print('Parent process %s.' % os.getpid())
-    p = Pool(len(devices))
+    SheepingDevices(devices[0])
+#     p = Pool(len(devices))
+    autothreads=[]
     for device in devices:
-        p.apply_async(SheepingDevices, args=(device,))
+        runThread = AutomationThread(device)
+        runThread.start()
+        autothreads.append(runThread)
         time.sleep(50)                
+    for td in autothreads:
+        td.join()   
     print('Waiting for all subprocesses done...')
-    p.close()
-    p.join() 
+#     p.close()
+#     p.join() 

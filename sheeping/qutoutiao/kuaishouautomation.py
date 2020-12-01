@@ -184,7 +184,8 @@ def SheepingDevices(device):
     end = time.time()
     print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))               
                     
-if __name__ == '__main__':    
+if __name__ == '__main__':   
+    #multiprocessing.freeze_support() 
 
     devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1')]
     #devices = [('ORL1193020723','9.1.1')]#Cupai 9
