@@ -265,7 +265,7 @@ class  QujianpanAutomation(BaseOperation):
         desired_caps['skipServerInstallation'] = True  
         
         desired_caps['newCommandTimeout'] = 600 #default 60 otherwise quit automatically
-        desired_caps['appActivity'] = 'com.qujianpan.client.ui.MainA'
+        desired_caps['appActivity'] = 'com.qujianpan.client.ui.GuideActivity'
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(3) #wait time when not find element
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
@@ -353,14 +353,14 @@ class  QujianpanAutomation(BaseOperation):
 
     def sign(self):
         try:
-            sleep(5+random.randint(0,3000)/1000)
+            self.sleep(5)
             #refuse to update
             element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivClose')
             if element:
                 element.click()
             
             #refuse to install 
-            sleep(5+random.randint(0,3000)/1000)
+            self.sleep(5)
             element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivChaiClose')
             if element:
                 element.click() 
@@ -381,9 +381,7 @@ class  QujianpanAutomation(BaseOperation):
                 
                 element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="点击领取"]')
                 if element:
-                    element.click() 
-                else:
-                    break 
+                    element.click()  
                                
                 sleep(35+random.randint(0,3000)/1000)    
                 #close ads window
@@ -394,7 +392,6 @@ class  QujianpanAutomation(BaseOperation):
                 element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="留在趣键盘"]')
                 if element:
                     element.click() 
-                    continue 
                     
                 sleep(3+random.randint(0,3000)/1000)                          
                 #close gift window
@@ -490,7 +487,7 @@ class  QujianpanAutomation(BaseOperation):
 if __name__ == '__main__':    
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
-    devices = [('DU2YYB14CL003271','4.4.2')]
+    #devices = [('DU2YYB14CL003271','4.4.2')]
     devices = [('PBV0216C02008555','8.0')] #huawei P9 
     #devices = [('ORL1193020723','9.1.1')]#Cupai 9
     #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X 
@@ -500,7 +497,7 @@ if __name__ == '__main__':
        
 
     #devices = [('A7QDU18420000828','9')]  
-    devices = [('SAL0217A28001753','9.1')]     
+    #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version)         
         t = threading.Thread(target=qujianpan.actAutomation(), args=(deviceName,version,))

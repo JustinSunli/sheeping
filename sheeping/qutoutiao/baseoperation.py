@@ -1,5 +1,6 @@
 # coding: utf-8
 from time import sleep
+import time
 import random
 import traceback 
 import math
@@ -23,30 +24,68 @@ class AutomationException(Exception):
 class ExecutionStatistics:
     def __init__(self):
         
-        self.startMoney = 0
-        self.endMoney = 0
-        self.startTime = 0
-        self.endTime = 0
-        self.executionStatus = False 
-        self.currentMoney = 0
-        self.dailyMoney = 0
-        self.dailyTotalTime = 0
-        self.lastExecutionTime = 0
+        self.deviceName = None
+        self.AppName = None
+        
+        self.startMoney = None
+        self.endMoney = None
+        
+        self.dailyFirstExecution = False 
+        
+        self.currentMoney = None       
+        self.dailyStartMoney = None
+        self.dailyEndMoney = None
+        
+        self.startTime = None
+        self.entTime = None
+        self.dailyTotalTime = None
+        self.lastExecutionTime = None
+        self.priority = 0
+        
+    def __lt__(self,other): 
+        return self.priority < other.priority        
 
 
 class BaseOperation:   
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
-       self.isFirst = True
-       self.sleepseconds = 5
-       self.driver = None
-       self.util = None
+        
+        self.sleepseconds = 5
+        self.driver = None
+        self.util = None
        
-       self.stat = ExecutionStatistics()
-       self.stat.startMoney = 0
-       self.stat.endMoney = 0
-       self.stat.startTime = 0
-       self.stat.endTime = 0 
-    
+        self.stat = ExecutionStatistics()
+        self.stat.startMoney = None
+        self.stat.endMoney = None
+        self.stat.startTime = None
+        self.stat.endTime = None 
+
+        self.stat.deviceName = deviceName
+        self.stat.AppName = None
+        
+        self.stat.startMoney = None
+        self.stat.endMoney = None
+        
+        self.stat.dailyFirstExecution = False 
+        
+        self.stat.currentMoney = None        
+        self.stat.dailyStartMoney = None
+        self.stat.dailyEndMoney = None
+        
+        self.stat.startTime = None
+        self.stat.entTime = None
+        self.stat.lastExecutionTime = None 
+        self.stat.priority = 0   
+        
+    def sleep(self,time=0):
+        #sleep some seconds
+        sleep(time+random.randint(0,2000)/1000)
+        
+    def executionTime(self,fromHour=0,toHour=24):
+        timeStruct = time.localtime(time.time())
+        if timeStruct.tm_hour >= fromHour and timeStruct.tm_hour < toHour:
+            return True
+        return False
+     
     def get_snap(self):
         """
         对整个网页截图，保存图片，然后用PIL.Image拿到图片对象

@@ -39,6 +39,9 @@ class  KuaiShouAutomation(BaseOperation):
         # adb shell pm list package # adb shell pm list package -3 -f 
         # adb logcat -c // clear logs
         # adb logcat ActivityManager:I *:s
+        # adb -s SAL0217A28001753 shell settings delete global global_http_proxy_host
+        # adb -s SAL0217A28001753 shell settings delete global http_proxy
+        # adb -s SAL0217A28001753 shell settings delete global global_http_proxy_port
         
         self.deviceName=deviceName
         self.version=version
@@ -51,7 +54,7 @@ class  KuaiShouAutomation(BaseOperation):
         
 #         
 #         self.username = username
-#         self.password = password
+#         self.password = password 
     def init_driver(self):
         desired_caps = {}
         desired_caps['platformName'] = 'Android'

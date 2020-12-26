@@ -38,9 +38,10 @@ class  KuaiKanDianAutomation(BaseOperation):
         #tasklist |findstr '15828'
         
         # adb devices
-        # adb shell pm list package # adb shell pm list package -3 -f 
+        # adb shell pm list package 
+        # adb shell pm list package -3 -f 
         # adb logcat -c // clear logs
-        # adb logcat ActivityManager:I *:s
+        # 
         
         #driver.startActivity("com.kuaihuoyun.freight", ".KDLaunch");
 #
