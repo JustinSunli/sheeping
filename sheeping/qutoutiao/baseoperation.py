@@ -31,6 +31,7 @@ class ExecutionStatistics:
         self.endMoney = None
         
         self.dailyFirstExecution = False 
+        self.dailyLastExecution = False 
         
         self.currentMoney = None       
         self.dailyStartMoney = None
@@ -62,17 +63,12 @@ class BaseOperation:
         self.stat.deviceName = deviceName
         self.stat.AppName = None
         
-        self.stat.startMoney = None
-        self.stat.endMoney = None
-        
-        self.stat.dailyFirstExecution = False 
-        
-        self.stat.currentMoney = None        
+        self.stat.dailyFirstExecution = False
+        self.stat.dailyLastExecution = False 
+                 
         self.stat.dailyStartMoney = None
         self.stat.dailyEndMoney = None
         
-        self.stat.startTime = None
-        self.stat.entTime = None
         self.stat.lastExecutionTime = None 
         self.stat.priority = 0   
         
@@ -80,7 +76,13 @@ class BaseOperation:
         #sleep some seconds
         sleep(time+random.randint(0,2000)/1000)
         
-    def executionTime(self,fromHour=0,toHour=24):
+    def preExecution(self):
+        self.stat.startTime = time.time()
+        return 
+    def afterExecution(self):
+        self.stat.endTime = time.time()
+        return
+    def checkExecutionTime(self,fromHour=0,toHour=24):
         timeStruct = time.localtime(time.time())
         if timeStruct.tm_hour >= fromHour and timeStruct.tm_hour < toHour:
             return True
