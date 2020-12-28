@@ -567,17 +567,17 @@ class  QujianpanAutomation(BaseOperation):
             element.click()
             return True
         
-        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭'广告)]")
-        if element:
-            element.click()
-            return True
+#       element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭'广告)]")
+#       if element:
+#           element.click()
+#           return True
+#       
+#       element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭')]")
+#       if element:
+#           element.click()
+#           return True        
         
-        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭')]")
-        if element:
-            element.click()
-            return True        
-        
-        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.FrameLayout[@id='android:id/content']/android.widget.RelativeLayout/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.ImageView")
+        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.view.View")
         if element:
            element.click()
            return True
