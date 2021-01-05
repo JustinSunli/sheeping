@@ -1,10 +1,14 @@
 # coding: utf-8
+import sys
+import os
+curPath = os.path.abspath(os.path.dirname(__file__))
+rootPath = os.path.split(curPath)[0]
+sys.path.append(rootPath)
+
 from time import sleep
 from appium import webdriver
 import re
 import time
-import os
-import sys
 import math
 import string
 import json
@@ -627,8 +631,8 @@ class  QujianpanAutomation(BaseOperation):
                 break
             self.sleep()
         #watch ads until it finished
-        for iter in range(30):
-            if self.driver.current_activity == ads_activity:
+        for iter in range(60):
+            if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity']):
                 if self.closeAdsDetails():
                     break
             else:
@@ -693,7 +697,7 @@ class  QujianpanAutomation(BaseOperation):
                 if self.driver :
                     self.tearDown()  
                 crashCount+=1                    
-                if crashCount > 10:
+                if crashCount > 3:
                     break                             
 
         self.stat.endTime = time.time()
