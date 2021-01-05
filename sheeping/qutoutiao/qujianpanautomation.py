@@ -632,7 +632,7 @@ class  QujianpanAutomation(BaseOperation):
             self.sleep()
         #watch ads until it finished
         for iter in range(60):
-            if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity']):
+            if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity','com.innotech.jb.combusiness.web.SignDetailWebActivity']):
                 if self.closeAdsDetails():
                     break
             else:
