@@ -390,10 +390,12 @@ class  QujianpanAutomation(BaseOperation):
                     if element:
                         element.click()                                          
         
+        self.sleep(6)
         print("--------collect money-------")#collect money
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View/android.view.View/android.view.View[8]')
         if element:
             element.click() 
+        self.sleep(6)
         print("--------兑换-------")#兑换
         element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="兑换"]')
         if element:
@@ -406,6 +408,7 @@ class  QujianpanAutomation(BaseOperation):
                 if element:
                     element.click()  
                     self.watchQuJianPanSmallAdsAndClose()
+        self.sleep(6)
         print("--------领取奖励-------")#领取奖励
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View/android.view.View/android.view.View[9]')
         if element:
@@ -417,7 +420,8 @@ class  QujianpanAutomation(BaseOperation):
                 self.watchAdsAndCloseWindow(current_activity) 
                 element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="知道了"]')
                 if element:
-                    element.click()                           
+                    element.click()   
+        self.sleep(6)                        
         print("--------每日任务------")#每日任务
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[1]/android.view.View[5]/android.view.View[2]')
         if element:
@@ -439,7 +443,8 @@ class  QujianpanAutomation(BaseOperation):
             element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.Image[contains(@text,"model_close")]')
             if element:
                 element.click()
-            
+        
+        self.sleep(6)   
         print("--------小猪转盘------")#小猪转盘
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[1]/android.view.View[5]/android.view.View[3]')
         if element:
@@ -635,17 +640,29 @@ class  QujianpanAutomation(BaseOperation):
             if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity','com.innotech.jb.combusiness.web.SignDetailWebActivity']):
                 if self.closeAdsDetails():
                     break
-            else:
+            elif self.driver.current_activity=='com.iclicash.advlib.ui.front.InciteADActivity':
+                self.sleep(1)
+                element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="点击重播"]')
+                if element:
+                    if self.closeAdsDetails():
+                        break                            
+            else: #com.iclicash.advlib.ui.front.ADBrowser
+                print(self.driver.current_activity)
                 self.driver.back()
-                self.sleep(2)
+                self.sleep(3)
+                if self.closeAdsDetails():
+                    break                
+                if self.driver.current_activity == activity:
+                    break
+
         print("GoOut--------"+sys._getframe().f_code.co_name+"-------")        
         
     def closeAddsWindow(self):
         print("Enter--------"+sys._getframe().f_code.co_name+"-------")                
         for iter in range(2):
             if self.closeAdsDetails():
+                print("GoOut--------"+sys._getframe().f_code.co_name+"-------") 
                 break
-        print("GoOut--------"+sys._getframe().f_code.co_name+"-------")        
         
     def closeAdsDetails(self):
         print("Enter--------"+sys._getframe().f_code.co_name+"-------")                        
@@ -665,8 +682,8 @@ class  QujianpanAutomation(BaseOperation):
 #           element.click()
 #           return True        
         
-        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.view.View")
-        if element:
+        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.qujianpan.client:id/action_bar_root']/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.view.View")
+        if element and element.is_enabled() and element.is_displayed():
            element.click()
            print("GoOut--------"+sys._getframe().f_code.co_name+"-------")           
            return True
