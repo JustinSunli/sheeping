@@ -52,6 +52,9 @@ def SheepingDevices(device):
     auto.basecount = shuabaocount
     overexecs.append(auto)     
 
+    executedList = []
+    executionList = []
+    
     for iter in range(3):
         try:
             auto=WeChatAutomation(deviceName,version)

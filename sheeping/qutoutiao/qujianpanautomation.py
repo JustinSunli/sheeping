@@ -450,7 +450,7 @@ class  QujianpanAutomation(BaseOperation):
         if element:
             element.click() 
             self.sleep(1)        
-            for iter in range(10): 
+            for iter in range(15): 
                 print("........."+str(iter)+".........")          
                 element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[5]/android.view.View[2]')
                 if element:
@@ -499,18 +499,19 @@ class  QujianpanAutomation(BaseOperation):
 
         self.stat.deviceName = self.deviceName
         self.stat.AppName = self.__class__.__name__
-        self.sleep(5)
+        self.sleep(10)
+        
+        print("--------refuse to update------")#refuse to update
+        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivClose')
+        if element:
+            element.click()
+        
         print("--------close home tab show------")#close home tab show
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/home_bottom_close')
         if element:
             element.click()            
         print("--------close 提现 ads------")#close 提现 ads
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/new_red_close')
-        if element:
-            element.click()
-            
-        print("--------refuse to update------")#refuse to update
-        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivClose')
         if element:
             element.click()
         
@@ -637,6 +638,7 @@ class  QujianpanAutomation(BaseOperation):
             self.sleep()
         #watch ads until it finished
         for iter in range(60):
+            #,'com.qujianpan.adlib.adcontent.view.video.AdInVideoBaseActivity'
             if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity','com.innotech.jb.combusiness.web.SignDetailWebActivity']):
                 if self.closeAdsDetails():
                     break
@@ -732,12 +734,12 @@ if __name__ == '__main__':
     
        
 
-    devices = [('A7QDU18420000828','9')]  
+    #devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version)  
         
-        qujianpan.stat.dailyFirstExecution = False
+        qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 
           
         t = threading.Thread(target=qujianpan.actAutomation(), args=(deviceName,version,))
