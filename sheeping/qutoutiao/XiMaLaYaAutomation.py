@@ -1,5 +1,5 @@
 '''
-Created on 2020年2月10日
+Created on 2020年2月4日
 
 @author: huang
 '''
@@ -32,9 +32,9 @@ from airtest.cli.parser import cli_setup
 #assii unicode
 from urllib.request import quote
 
-class  mayikandianAutomation(BaseOperation):
+class  XiMaLaYaAutomation(BaseOperation):
     def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
-        super(mayikandianAutomation,self).__init__()
+        super(XiMaLaYaAutomation,self).__init__()
         #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
         
         #adb not found
@@ -66,13 +66,13 @@ class  mayikandianAutomation(BaseOperation):
         desired_caps['platformVersion'] = self.version
         desired_caps['deviceName'] = self.deviceName
         
-        desired_caps['appPackage'] = 'com.ldzs.zhangxin'
+        desired_caps['appPackage'] = 'com.ximalaya.ting.lite'
         
         desired_caps['noReset'] = True
         desired_caps['udid'] = self.deviceName
         desired_caps['newCommandTimeout'] = 600 #default 60 otherwise quit automatically
         
-        desired_caps['appActivity'] = 'com.weishang.wxrd.activity.SplashActivity'
+        desired_caps['appActivity'] = 'com.ximalaya.ting.android.host.activity.WelComeActivity'
         
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(3) #wait time when not find element
@@ -88,7 +88,17 @@ class  mayikandianAutomation(BaseOperation):
     def tearDown(self):
         self.driver.quit()    
     
-        
+    def watchVedio(self):
+        point = exists(Template(r"..\imagesrc\tpl1580798064597.png",threshold=0.8))
+        if point: 
+            touch(point)
+            sleep(15 +random.randint(0,5000)/1000)
+            
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='关闭广告']")
+            if element:
+                element.click()
+            else:
+                self.driver.back()        
        
     def doTask(self):
         #keyevent("BACK")
@@ -98,81 +108,63 @@ class  mayikandianAutomation(BaseOperation):
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
         
-       # element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ldzs.zhangxin:id/iv_article_thumb']")
-        #        if element:
-         #           element.click()
-          #          sleep(30+random.randint(0,3000)/1000)
-           #         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='关闭广告']")
-            #        if element:
-             #           element.click()
-              #          element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ldzs.zhangxin:id/iv_close']")
-               #         if element:
-                #            element.click()
         
-        #点任务
-        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@resource-id='com.ldzs.zhangxin:id/tv_task_tab']")
+        #go to fuli
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.RadioButton[@text='福利']")
+        if element:
+            element.click()#else: return            
+        
+        #double sign on bonus    
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@resource-id='com.ximalaya.ting.lite:id/main_tv_coin_earn_more']")
         if element:
             element.click()
-            sleep(1+random.randint(0,3000)/1000)
-            
-        self.driverSwipe.SwipeUp()            
-        #计时赚  
-        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='计时赚']")
+            sleep(30+random.randint(0,3000)/1000)
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ximalaya.ting.lite:id/tt_video_ad_close']")
+            if element:
+                element.click()
+                sleep(3+random.randint(0,2000)/1000)
+                self.driver.back()
+        #领取金币                    
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Button[@text='领取金币']")
         if element:
             element.click()
-            
-        sleep(1+random.randint(0,1000)/1000)
-        elements = self.find_elements_by_xpath_without_exception(self.driver,"//android.webkit.WebView/android.view.View[3]/android.view.View/*")  
-        for i in elements:#
-            el=self.find_element_by_xpath_without_exception(i,"//android.view.View/android.view.View[@text='已完成']")
-            if(el):
-                continue
-            else:
-                i.click()
-                sleep(32+random.randint(0,2000)/1000)
-                
-                while(True):#找金币  返回页面        找到才可回 
-                    self.driver.back()
-                    sleep(3+random.randint(0,1000)/1000)
-                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ldzs.zhangxin:id/reward_title_image']")
-                    if element:
-                        break
+            sleep(5+random.randint(0,3000)/1000)
+            self.driver.back()
         
-                sleep(3+random.randint(0,1000)/1000)
-                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ldzs.zhangxin:id/iv_close']")
-                if element:
-                    element.click()
-                else:
-                    self.driver.back()
+        #bubbles money
+        elements = self.find_elements_by_xpath_without_exception(self.driver,"//android.webkit.WebView[@text='福利中心']/android.view.View/android.view.View[2]/*")  
+        number=len(elements)
+        for iter in range(number-4):             
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.webkit.WebView[@text='福利中心']/android.view.View/android.view.View[2]/android.view.View[3]")
+            if element:
+                element.click()
+                sleep(5+random.randint(0,2000)/1000)
+                self.driver.back()    
+            
             
         self.driverSwipe.SwipeUp()
-        #sleep(3+random.randint(0,1000)/1000)
-        #self.driverSwipe.SwipeUp()
         
-        elements = self.find_elements_by_xpath_without_exception(self.driver,"//android.webkit.WebView/android.webkit.WebView/android.view.View[6]/android.view.View/*")  
-        for i in elements:
-            el=self.find_element_by_xpath_without_exception(i,"//android.view.View/android.view.View[@text='已完成']")
-            if(el):
-                continue
-            else:
-                i.click()
-                sleep(62+random.randint(0,2000)/1000)
-                
-                while(True):                
-                    self.driver.back()
-                    sleep(3+random.randint(0,1000)/1000)
-                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ldzs.zhangxin:id/reward_title_image']")
-                    if element:
-                        break
+        #to my tab
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.RadioButton[@text='我的']")
+        if element:
+            element.click()
+            sleep(1)
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.RadioButton[@text='福利']")
+            if element:
+                element.click()
         
-                sleep(3+random.randint(0,1000)/1000)
-                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ldzs.zhangxin:id/iv_close']")
-                if element:
-                    element.click()
-                else:
-                    self.driver.back()
-        self.driver.back()
+        #interesting vedio
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Button[@text='去完成']")
+        if element:
+            element.click()
+            sleep(30+random.randint(0,3000)/1000)
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@resource-id='com.ximalaya.ting.lite:id/tt_video_ad_close']")
+            if element:
+                element.click()
+                sleep(4+random.randint(0,2000)/1000)
+                self.driver.back()
         
+       
         #aapt dump badging
         #choose one
         #sleep(10+random.randint(0,5000)/1000)
@@ -222,7 +214,7 @@ def SheepingDevices(device):
     start = time.time()
     while(True):
         try:
-            object = mayikandianAutomation(deviceName,version)
+            object = XiMaLaYaAutomation(deviceName,version)
             object.actAutomation()
             #Always execution 
             break  
