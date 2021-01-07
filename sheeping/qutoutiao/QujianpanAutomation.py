@@ -418,9 +418,9 @@ class  QujianpanAutomation(BaseOperation):
                 current_activity = self.driver.current_activity
                 element.click()   
                 self.watchAdsAndCloseWindow(current_activity) 
-                element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="知道了"]')
-                if element:
-                    element.click()   
+            element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="知道了"]')
+            if element:
+                element.click()   
         self.sleep(6)                        
         print("--------每日任务------")#每日任务
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[1]/android.view.View[5]/android.view.View[2]')
@@ -735,7 +735,7 @@ if __name__ == '__main__':
        
 
     #devices = [('A7QDU18420000828','9')]  
-    #devices = [('SAL0217A28001753','9.1')]     
+    devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version)  
         

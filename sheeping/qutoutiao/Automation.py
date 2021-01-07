@@ -10,26 +10,34 @@ import random
 import threading
 import traceback
 import numpy as np
-from qutoutiao import DriverSwipe, wechatautomation
-from qutoutiao.qutoutiaoautomation import QutoutiaoAutomation 
-from qutoutiao.qujianpanautomation import QujianpanAutomation
-from qutoutiao.shuabaoautomation import ShuabaoAutomation
-from qutoutiao.kuaishouautomation import KuaiShouAutomation
-from qutoutiao.wechatautomation import WeChatAutomation
-from qutoutiao.kuaikandianautomation import KuaiKanDianAutomation
-from qutoutiao.miduautomation import MiduAutomation
-from qutoutiao.huoshanautomation import HuoShanAutomation
-from qutoutiao.xiangkanautomation import XiangKanAutomation
+from qutoutiao import DriverSwipe, WeChatAutomation
+from qutoutiao.QutoutiaoAutomation import QutoutiaoAutomation 
+from qutoutiao.QujianpanAutomation import QujianpanAutomation
+from qutoutiao.ShuabaoAutomation import ShuabaoAutomation
+from qutoutiao.KuaiShouAutomation import KuaiShouAutomation
+from qutoutiao.WeChatAutomation import WeChatAutomation
+from qutoutiao.KuaiKanDianAutomation import KuaiKanDianAutomation
+from qutoutiao.MiduAutomation import MiduAutomation
+from qutoutiao.HuoShanAutomation import HuoShanAutomation
+from qutoutiao.XiangKanAutomation import XiangKanAutomation
 
 from qutoutiao.quanminautomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from qutoutiao.baseoperation import BaseOperation
-        
+
+def getLastExecution(executedList):
+    if len(executedList)==0:
+        return None
+    sortedList = sorted(executedList, key=lambda x:x['stat']['lastExecutionTime'],reverse = True)
+    return sortedList[0]
+    
 def SheepingDevices(device):
     (deviceName,version) = device
     print('Run task %s (%s)...' % (deviceName, os.getpid()))
     start = time.time()    
+    
+    executionDictionary = {}
     
     execs = []
     kuaishoucount  =   100
@@ -55,82 +63,96 @@ def SheepingDevices(device):
     executedList = []
     executionList = []
     
-    for iter in range(3):
-        try:
-            auto=WeChatAutomation(deviceName,version)
-            auto.basecount = wechatcount+random.randint(0,5)
-            overexecs.append(auto)                          
-        except Exception:    
-            print(sys.exc_info())    
-#     for iter in range(4):
-#         try:
-#             auto=KuaiShouAutomation(deviceName,version)
-#             auto.basecount = kuaishoucount+random.randint(0,50)
-#             overexecs.append(auto)                          
-#         except Exception:    
-#             print(sys.exc_info())
- 
-    for iter in range(4):
-        try:
-            
-            auto=KuaiKanDianAutomation(deviceName,version)
-            auto.basecount = kuaikandiancount+random.randint(0,20)
-            overexecs.append(auto)                           
-        except Exception:    
-            print(sys.exc_info())             
-    for iter in range(4):
-        try:
-            auto=QutoutiaoAutomation(deviceName,version)
-            auto.basecount = qutoutiaocount+random.randint(0,5)
-            overexecs.append(auto)                         
-        except Exception:    
-            print(sys.exc_info()) 
-    for iter in range(4):
-        try:
-            auto=QuanMinAutomation(deviceName,version)
-            auto.basecount = quanmincount+random.randint(0,5)
-            overexecs.append(auto)                         
-        except Exception:    
-            print(sys.exc_info())     
     for iter in range(4):
         try:
             auto=QujianpanAutomation(deviceName,version)
-            overexecs.append(auto)                       
-        except Exception:    
-            print(sys.exc_info())  
-    for iter in range(4):
-        try:
-            auto=MiduAutomation(deviceName,version)
-            auto.basecount = miducount+random.randint(0,50)            
-            overexecs.append(auto)                       
-        except Exception:    
-            print(sys.exc_info())   
-    for iter in range(4):
-        try:
-            auto=HuoShanAutomation(deviceName,version)
-            auto.basecount = huoshancount+random.randint(0,50)            
-            overexecs.append(auto)                       
-        except Exception:    
-            print(sys.exc_info())  
-    for iter in range(4):
-        try:
-            auto=XiangKanAutomation(deviceName,version)
-            auto.basecount = xiangkancount+random.randint(0,25)            
+            auto
             overexecs.append(auto)                       
         except Exception:    
             print(sys.exc_info())  
 
-                                                         
-    np.random.shuffle(overexecs)
-    
+
+    np.random.shuffle(overexecs)    
     execs.extend(overexecs)
     while True:
         for ex in execs:
-            ex.actAutomation()             
+            ex.actAutomation()
+            if executionDictionary.get(ex.stat.AppName):
+                executionDictionary.append(ex)                
+            else:            
+                executionDictionary[ex.stat.AppName] = []
         
         break
     end = time.time()
-    print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))               
+    print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))             
+    
+#     for iter in range(3):
+#         try:
+#             auto=WeChatAutomation(deviceName,version)
+#             auto.basecount = wechatcount+random.randint(0,5)
+#             overexecs.append(auto)                          
+#         except Exception:    
+#             print(sys.exc_info())    
+# #     for iter in range(4):
+# #         try:
+# #             auto=KuaiShouAutomation(deviceName,version)
+# #             auto.basecount = kuaishoucount+random.randint(0,50)
+# #             overexecs.append(auto)                          
+# #         except Exception:    
+# #             print(sys.exc_info())
+#  
+#     for iter in range(4):
+#         try:
+#             
+#             auto=KuaiKanDianAutomation(deviceName,version)
+#             auto.basecount = kuaikandiancount+random.randint(0,20)
+#             overexecs.append(auto)                           
+#         except Exception:    
+#             print(sys.exc_info())             
+#     for iter in range(4):
+#         try:
+#             auto=QutoutiaoAutomation(deviceName,version)
+#             auto.basecount = qutoutiaocount+random.randint(0,5)
+#             overexecs.append(auto)                         
+#         except Exception:    
+#             print(sys.exc_info()) 
+#     for iter in range(4):
+#         try:
+#             auto=QuanMinAutomation(deviceName,version)
+#             auto.basecount = quanmincount+random.randint(0,5)
+#             overexecs.append(auto)                         
+#         except Exception:    
+#             print(sys.exc_info())     
+#     for iter in range(4):
+#         try:
+#             auto=QujianpanAutomation(deviceName,version)
+#             overexecs.append(auto)                       
+#         except Exception:    
+#             print(sys.exc_info())  
+#     for iter in range(4):
+#         try:
+#             auto=MiduAutomation(deviceName,version)
+#             auto.basecount = miducount+random.randint(0,50)            
+#             overexecs.append(auto)                       
+#         except Exception:    
+#             print(sys.exc_info())   
+#     for iter in range(4):
+#         try:
+#             auto=HuoShanAutomation(deviceName,version)
+#             auto.basecount = huoshancount+random.randint(0,50)            
+#             overexecs.append(auto)                       
+#         except Exception:    
+#             print(sys.exc_info())  
+#     for iter in range(4):
+#         try:
+#             auto=XiangKanAutomation(deviceName,version)
+#             auto.basecount = xiangkancount+random.randint(0,25)            
+#             overexecs.append(auto)                       
+#         except Exception:    
+#             print(sys.exc_info())  
+
+                                                         
+              
             
 if __name__ == '__main__':   
         

@@ -11,16 +11,16 @@ from queue import PriorityQueue
 import threading
 import traceback
 import numpy as np
-from qutoutiao import DriverSwipe, wechatautomation
-from qutoutiao.qutoutiaoautomation import QutoutiaoAutomation 
-from qutoutiao.qujianpanautomation import QujianpanAutomation
-from qutoutiao.shuabaoautomation import ShuabaoAutomation
-from qutoutiao.kuaishouautomation import KuaiShouAutomation
-from qutoutiao.wechatautomation import WeChatAutomation
-from qutoutiao.kuaikandianautomation import KuaiKanDianAutomation
-from qutoutiao.miduautomation import MiduAutomation
-from qutoutiao.huoshanautomation import HuoShanAutomation
-from qutoutiao.xiangkanautomation import XiangKanAutomation
+from qutoutiao import DriverSwipe, WeChatAutomation
+from qutoutiao.QutoutiaoAutomation import QutoutiaoAutomation 
+from qutoutiao.QujianpanAutomation import QujianpanAutomation
+from qutoutiao.ShuabaoAutomation import ShuabaoAutomation
+from qutoutiao.KuaiShouAutomation import KuaiShouAutomation
+from qutoutiao.WeChatAutomation import WeChatAutomation
+from qutoutiao.KuaiKanDianAutomation import KuaiKanDianAutomation
+from qutoutiao.MiduAutomation import MiduAutomation
+from qutoutiao.HuoShanAutomation import HuoShanAutomation
+from qutoutiao.XiangKanAutomation import XiangKanAutomation
 
 from qutoutiao.quanminautomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException

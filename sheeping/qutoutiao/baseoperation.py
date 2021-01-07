@@ -82,6 +82,13 @@ class BaseOperation:
     def afterExecution(self):
         self.stat.endTime = time.time()
         return
+    def stringToTimeData(self,str_data):
+        # 格式时间成毫秒
+        strptime = time.strptime(str_data,"%Y-%m-%d %H:%M:%S")
+        print("strptime",strptime)
+        mktime = int(time.mktime(strptime)*1000)
+        print("mktime",mktime)
+        return mktime    
     def checkExecutionTime(self,fromHour=0,toHour=24):
         timeStruct = time.localtime(time.time())
         if timeStruct.tm_hour >= fromHour and timeStruct.tm_hour < toHour:
