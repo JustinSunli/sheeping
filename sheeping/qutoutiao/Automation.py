@@ -90,10 +90,10 @@ class Automation():
         executionList.append(auto)     
     
     
-        
-        for iter in range(4):
+        QuanjianpanExecutionPlan = [(8,23),(9,12),(13,17),(8,23),(19,21),(8,23),(8,23),(8,23)]
+        for (fromTime,toTime) in QuanjianpanExecutionPlan:
             try:
-                auto=QujianpanAutomation(deviceName,version)
+                auto=QujianpanAutomation(deviceName,version,(fromTime,toTime))
                 executedList = executionDictionary.get(auto.stat.AppName);
                 lastExecution = self.getLastExecution(executedList)
                 if lastExecution:

@@ -301,7 +301,7 @@ class  QujianpanAutomation(BaseOperation):
 #####################################################################################################################################
 #####################################################################################################################################        
 #####################################################################################################################################                
-    def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+    def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
         super(QujianpanAutomation,self).__init__()
         #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
         #adb not found
@@ -739,7 +739,7 @@ if __name__ == '__main__':
     devices = [('A7QDU18420000828','9')]  
     #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
-        qujianpan = QujianpanAutomation(deviceName,version)  
+        qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
         
         qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 

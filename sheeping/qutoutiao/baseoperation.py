@@ -48,7 +48,7 @@ class ExecutionStatistics:
 
 
 class BaseOperation:   
-    def __init__(self, deviceName='A7QDU18420000828',version='9',username='18601793121', password='Initial0'):
+    def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
         
         self.sleepseconds = 5
         self.driver = None
@@ -94,7 +94,8 @@ class BaseOperation:
         if timeStruct.tm_hour >= fromHour and timeStruct.tm_hour < toHour:
             return True
         return False
-     
+    def getPriority(self):
+        return 1
     def get_snap(self):
         """
         对整个网页截图，保存图片，然后用PIL.Image拿到图片对象
