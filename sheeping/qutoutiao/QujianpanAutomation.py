@@ -506,10 +506,6 @@ class  QujianpanAutomation(BaseOperation):
         if element:
             element.click()
         
-        print("--------close home tab show------")#close home tab show
-        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/home_bottom_close')
-        if element:
-            element.click()            
         print("--------close 提现 ads------")#close 提现 ads
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/new_red_close')
         if element:
@@ -520,6 +516,11 @@ class  QujianpanAutomation(BaseOperation):
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivChaiClose')
         if element:
             element.click() 
+            
+        print("--------close home tab show------")#close home tab show
+        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/home_bottom_close')
+        if element:
+            element.click()               
             
         print("--------go to me tab------")#           #go to me tab
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[4]")
@@ -638,7 +639,8 @@ class  QujianpanAutomation(BaseOperation):
             self.sleep()
         #watch ads until it finished
         for iter in range(60):
-            #,'com.qujianpan.adlib.adcontent.view.video.AdInVideoBaseActivity'
+            if self.driver.current_activity== 'com.qujianpan.adlib.adcontent.view.video.AdInVideoBaseActivity':
+                print()
             if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity','com.innotech.jb.combusiness.web.SignDetailWebActivity']):
                 if self.closeAdsDetails():
                     break
@@ -734,8 +736,8 @@ if __name__ == '__main__':
     
        
 
-    #devices = [('A7QDU18420000828','9')]  
-    devices = [('SAL0217A28001753','9.1')]     
+    devices = [('A7QDU18420000828','9')]  
+    #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version)  
         
