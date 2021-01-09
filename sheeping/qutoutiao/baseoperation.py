@@ -53,6 +53,7 @@ class BaseOperation:
         self.sleepseconds = 5
         self.driver = None
         self.util = None
+        (self.fromHour,self.toHour) = timerange
        
         self.stat = ExecutionStatistics()
         self.stat.startMoney = None
@@ -62,6 +63,7 @@ class BaseOperation:
 
         self.stat.deviceName = deviceName
         self.stat.AppName = None
+        self.stat.executed = False
         
         self.stat.dailyFirstExecution = False
         self.stat.dailyLastExecution = False 
@@ -85,17 +87,34 @@ class BaseOperation:
     def stringToTimeData(self,str_data):
         # 格式时间成毫秒
         strptime = time.strptime(str_data,"%Y-%m-%d %H:%M:%S")
-        print("strptime",strptime)
+        #print("strptime",strptime)
         mktime = int(time.mktime(strptime)*1000)
-        print("mktime",mktime)
+        #print("mktime",mktime)
         return mktime    
-    def checkExecutionTime(self,fromHour=0,toHour=24):
+    def checkExecutionTime(self):
         timeStruct = time.localtime(time.time())
-        if timeStruct.tm_hour >= fromHour and timeStruct.tm_hour < toHour:
+        if timeStruct.tm_hour >= self.fromHour and timeStruct.tm_hour < self.toHour:
             return True
         return False
     def getPriority(self):
+        timeStruct = time.localtime(time.time())
+        fromTimeStr = "{}-{}-{} {}:{}:{}".format(timeStruct.tm_year, timeStruct.tm_mon,timeStruct.tm_mday,self.fromHour,'0','0')
+        toTimeStr = None
+        if self.toHour!=24:
+            toTimeStr = "{}-{}-{} {}:{}:{}".format(timeStruct.tm_year, timeStruct.tm_mon,timeStruct.tm_mday,self.toHour,'0','0')
+        else:
+            toTimeStr = "{}-{}-{} {}:{}:{}".format(timeStruct.tm_year, timeStruct.tm_mon,timeStruct.tm_mday,23,'59','59')
+        fromTime = self.stringToTimeData(fromTimeStr)
+        toTime = self.stringToTimeData(toTimeStr)
+        
+        if toTime - time.time() <= 1*60*60*1000: #one hour
+            return 0
+        
         return 1
+    
+    def __lt__(self,other): 
+        return self.getPriority() < other.getPriority()    
+        
     def get_snap(self):
         """
         对整个网页截图，保存图片，然后用PIL.Image拿到图片对象
@@ -348,4 +367,4 @@ class BaseOperation:
         
         return element  
     def actAutomation(self,basecount=10):
-        print      
+        self.stat.executed = True      

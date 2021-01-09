@@ -11,6 +11,7 @@ import random
 import threading
 import traceback
 import numpy as np
+from queue import PriorityQueue
 from qutoutiao import DriverSwipe, WeChatAutomation
 from qutoutiao.QutoutiaoAutomation import QutoutiaoAutomation 
 from qutoutiao.QujianpanAutomation import QujianpanAutomation
@@ -28,14 +29,20 @@ from selenium.common.exceptions import WebDriverException
 from qutoutiao.baseoperation import BaseOperation
 
 class Automation():
+    def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
+        self.deviceName=deviceName
+        self.version=version
+            
     def stringToTimeData(self,str_data):
         # 格式时间成毫秒
         strptime = time.strptime(str_data,"%Y-%m-%d %H:%M:%S")
-        print("strptime",strptime)
+        #print("strptime",strptime)
         mktime = int(time.mktime(strptime)*1000)
-        print("mktime",mktime)
+        #print("mktime",mktime)
         return mktime      
     def getLastExecution(self,executedList):
+        if not executedList:
+            return None
         if len(executedList)==0:
             return None
         sortedList = sorted(executedList, key=lambda x:x['stat']['lastExecutionTime'],reverse = True)
@@ -55,19 +62,18 @@ class Automation():
             print(sys.exc_info())              
         return None
     
-    def SheepingDevices(self,device):
-        (deviceName,version) = device
+    def SheepingDevices(self):
+        (deviceName,version) = (self.deviceName,self.version)
         print('Run task %s (%s)...' % (deviceName, os.getpid()))
-        start = time.time()   
+        start = time.time() 
          
-        todayDate = time.strptime(time.time())
-        todayString = str(todayDate.tm_year)+'-'+str(todayDate.tm_mon)+'-'+str(todayDate.tm_day)
+        todayDate = time.localtime(time.time())
+        todayString = str(todayDate.tm_year)+'-'+str(todayDate.tm_mon)+'-'+str(todayDate.tm_mday)
         dictFileName = 'executionrecord/'+deviceName+'-'+todayString+'.txt'
         executionDictionary = self.readDictionary(dictFileName)
         if not executionDictionary: 
             executionDictionary = {}
         
-        execs = []
         kuaishoucount  =   100
         shuabaocount   =   2#+random.randint(0,10)
         kuaikandiancount = 50
@@ -80,44 +86,54 @@ class Automation():
                     
     
         executionList = []
+        executionQueue = PriorityQueue()
         
-        auto=WeChatAutomation(deviceName,version)
-        auto.basecount = wechatcount+random.randint(0,10)
-        execs.append(auto)      
-    
-        auto=ShuabaoAutomation(deviceName,version)
-        auto.basecount = shuabaocount
-        executionList.append(auto)     
+        
+#         auto=WeChatAutomation(deviceName,version)
+#         auto.basecount = wechatcount+random.randint(0,10)
+#     
+#         auto=ShuabaoAutomation(deviceName,version)
+#         auto.basecount = shuabaocount
+#         executionList.append(auto)     
     
     
         QuanjianpanExecutionPlan = [(7,23),(7,9),(12,14),(8,23),(18,20),(7,23),(7,23),(7,23)]
         for (fromTime,toTime) in QuanjianpanExecutionPlan:
             try:
                 auto=QujianpanAutomation(deviceName,version,(fromTime,toTime))
-                executedList = executionDictionary.get(auto.stat.AppName);
-                lastExecution = self.getLastExecution(executedList)
-                if lastExecution:
-                    auto.stat.lastExecutionTime = lastExecution.stat.lastExecutionTime
-                else:
-                    auto.stat.lastExecutionTime = self.stringToTimeData(todayString)
+                auto.stat.lastExecutionTime = self.stringToTimeData(todayString+" 0:0:0")
                 executionList.append(auto)                       
             except Exception:    
                 print(sys.exc_info())  
     
     
-        np.random.shuffle(executionList)    
-        execs.extend(executionList)
+        np.random.shuffle(executionList)     
         
-        while True:
-            for ex in execs:
-                ex.actAutomation()
-                if executionDictionary.get(ex.stat.AppName):
-                    executionDictionary.get(ex.stat.AppName).append(ex)                
-                else:            
-                    executionDictionary[ex.stat.AppName] = []
-                
-                self.writeDictionary(executionDictionary, dictFileName)
-            break
+        for iter in range(1000):
+            #
+            #sheduling the execution
+            for auto in executionList:
+                if not auto.stat.executed:
+                    if auto.checkExecutionTime():
+                        executedList = executionDictionary.get(auto.stat.AppName);
+                        lastExecution = self.getLastExecution(executedList)
+                        if lastExecution:
+                            auto.stat.lastExecutionTime = lastExecution.stat.lastExecutionTime
+                        executionQueue.put(auto)
+            
+            if executionQueue.empty():
+                break
+            
+            #execution
+            auto = executionQueue.get()
+            executedList = executionDictionary.get(auto.stat.AppName);
+            lastExecution = self.getLastExecution(executedList)
+            if lastExecution:
+                auto.stat.lastExecutionTime = lastExecution.stat.lastExecutionTime
+            auto.actAutomation()
+            
+            executionQueue.queue.clear()
+
         end = time.time()
         print('Task %s runs %0.2f seconds.' % (deviceName, (end - start)))             
         
@@ -190,9 +206,6 @@ class Automation():
               
             
 if __name__ == '__main__':   
-        
-
-         
     devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1'),('A7QDU18420000828','9.0'),('SAL0217A28001753','9.1')]
          
     devices = [('ORL1193020723','9.1.1')]#Cupai 9
@@ -222,14 +235,13 @@ if __name__ == '__main__':
             devices.append((deviceName,""))
                  
     print('Parent process %s.' % os.getpid())
-    p = Pool(len(devices))
-    automation = Automation()
-    for device in devices:
-        p.apply_async(automation.SheepingDevices, args=(device,))
+    for (deviceName,version) in devices:
+        automation = Automation(deviceName,version)
+        t = threading.Thread(target=automation.SheepingDevices)
+        t.start()
+        
         time.sleep(30)        
     print('Waiting for all subprocesses done...')
-    p.close()
-    p.join()
     
     
     

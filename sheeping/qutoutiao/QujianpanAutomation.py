@@ -349,6 +349,11 @@ class  QujianpanAutomation(BaseOperation):
         
     def tearDown(self):
         self.driver.quit()
+    def checkExecutionTime(self):
+        if super().checkExecutionTime():
+            if time.time() - self.stat.lastExecutionTime >= 30*60*1000: #30 minutes
+                return True
+        return False        
     def watchQuJianPanSmallAdsAndClose(self):
         print("Enter--------"+sys._getframe().f_code.co_name+"-------")        
         for iter in range(10):
@@ -362,7 +367,7 @@ class  QujianpanAutomation(BaseOperation):
 
     def MoneyBoxn(self):
         print("Enter--------"+sys._getframe().f_code.co_name+"-------")                
-        print("--------go to me tab-------")#go to me tab
+        print("--------go to 储蓄罐-------")#go to me tab
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[1]")
         if element:      
             element.click()         
@@ -696,6 +701,7 @@ class  QujianpanAutomation(BaseOperation):
         print("GoOut--------"+sys._getframe().f_code.co_name+"-------")           
                     
     def actAutomation(self):
+        super().actAutomation()
         print("Enter--------"+sys._getframe().f_code.co_name+"-------")                
         self.stat.startTime = time.time()
         crashCount=0
@@ -744,7 +750,7 @@ if __name__ == '__main__':
         qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 
           
-        t = threading.Thread(target=qujianpan.actAutomation(), args=(deviceName,version,))
+        t = threading.Thread(target=qujianpan.actAutomation())
         t.start()
         sleep(random.randint(0, 10))
         
