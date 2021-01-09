@@ -90,7 +90,7 @@ class Automation():
         executionList.append(auto)     
     
     
-        QuanjianpanExecutionPlan = [(8,23),(9,12),(13,17),(8,23),(19,21),(8,23),(8,23),(8,23)]
+        QuanjianpanExecutionPlan = [(7,23),(7,9),(12,14),(8,23),(18,20),(7,23),(7,23),(7,23)]
         for (fromTime,toTime) in QuanjianpanExecutionPlan:
             try:
                 auto=QujianpanAutomation(deviceName,version,(fromTime,toTime))
