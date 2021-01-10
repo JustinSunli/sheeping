@@ -747,7 +747,7 @@ if __name__ == '__main__':
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
         
-        qujianpan.stat.dailyFirstExecution = True
+        qujianpan.stat.dailyFirstExecution = False
         qujianpan.stat.dailyLastExecution = False 
           
         t = threading.Thread(target=qujianpan.actAutomation())

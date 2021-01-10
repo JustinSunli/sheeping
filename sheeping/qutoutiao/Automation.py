@@ -130,6 +130,10 @@ class Automation():
             lastExecution = self.getLastExecution(executedList)
             if lastExecution:
                 auto.stat.lastExecutionTime = lastExecution.stat.lastExecutionTime
+                auto.stat.dailyFirstExecution = False
+            else:
+                auto.stat.dailyFirstExecution = True
+                
             auto.actAutomation()
             
             executionQueue.queue.clear()
