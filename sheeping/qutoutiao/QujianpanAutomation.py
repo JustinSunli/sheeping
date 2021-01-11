@@ -536,29 +536,7 @@ class  QujianpanAutomation(BaseOperation):
         if element:
             self.stat.startMoney=int(element.text.split()[0].strip())
             if self.stat.dailyFirstExecution:
-                self.stat.dailyStartMoney = self.stat.startMoney
-            
-            #提现
-            if self.stat.startMoney > 100000:
-                element.click
-                self.sleep(1)
-                element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/coin_detail_cash')
-                if element:
-                    element.click()
-                    self.sleep(1)
-                    #10 元
-                    element=self.find_element_by_xpath_without_exception(self.driver, "//android.support.v7.widget.RecyclerView[@resource-id='com.qujianpan.client:id/withdrawalAmountRecyView']/android.view.ViewGroup[2]")
-                    if element:      
-                        element.click()
-                        self.sleep(1)
-                        #提现
-                        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/cashSubmit')
-                        if element:
-                            element.click()
-                            self.sleep(1)   
-                            self.driver.back()
-                            self.sleep(1)
-                            self.driver.back()                                     
+                self.stat.dailyStartMoney = self.stat.startMoney                                    
         
         #watch a ads             
         #element=self.find_element_by_xpath_without_exception(self.driver, "//android.support.v7.widget.RecyclerView[@resource-id='com.qujianpan.client:id/jiliTaskrecyclerView']/android.widget.LinearLayout[2]")
@@ -580,26 +558,23 @@ class  QujianpanAutomation(BaseOperation):
                 self.stat.dailyEndMoney = self.stat.endMoney
             
             #提现
-            if self.stat.startMoney > 100000:
-                element.click
+            if self.stat.startMoney > 150000:
+                element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/mainCardCatchGlod')
+                element.click()
                 self.sleep(1)
-                element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/coin_detail_cash')
-                if element:
+                    #10 元
+                element=self.find_element_by_xpath_without_exception(self.driver, "//android.support.v7.widget.RecyclerView[@resource-id='com.qujianpan.client:id/withdrawalAmountRecyView']/android.view.ViewGroup[2]")
+                if element:      
                     element.click()
                     self.sleep(1)
-                    #10 元
-                    element=self.find_element_by_xpath_without_exception(self.driver, "//android.support.v7.widget.RecyclerView[@resource-id='com.qujianpan.client:id/withdrawalAmountRecyView']/android.view.ViewGroup[2]")
-                    if element:      
+                    #提现
+                    element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/cashSubmit')
+                    if element:
                         element.click()
+                        self.sleep(1)   
+                        self.driver.back()
                         self.sleep(1)
-                        #提现
-                        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/cashSubmit')
-                        if element:
-                            element.click()
-                            self.sleep(1)   
-                            self.driver.back()
-                            self.sleep(1)
-                            self.driver.back()                   
+                        self.driver.back()                 
         #finish the task
         super().afterExecution()                
         print("GoOut--------"+sys._getframe().f_code.co_name+"-------")
@@ -747,7 +722,7 @@ if __name__ == '__main__':
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
         
-        qujianpan.stat.dailyFirstExecution = False
+        qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 
           
         t = threading.Thread(target=qujianpan.actAutomation())
