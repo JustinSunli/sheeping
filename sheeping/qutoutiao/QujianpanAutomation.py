@@ -319,6 +319,9 @@ class  QujianpanAutomation(BaseOperation):
         self.password=password
         self.driver = None
         
+        self.stat.deviceName = self.deviceName
+        self.stat.AppName = self.__class__.__name__
+        
         self.gabageDict = {}
 #         
 #         self.username = username
@@ -351,7 +354,7 @@ class  QujianpanAutomation(BaseOperation):
         self.driver.quit()
     def checkExecutionTime(self):
         if super().checkExecutionTime():
-            if time.time() - self.stat.lastExecutionTime >= 30*60*1000: #30 minutes
+            if int(time.time()) - self.stat.lastExecutionTime >= 30*60: #30 minutes
                 return True
         return False        
     def watchQuJianPanSmallAdsAndClose(self):
@@ -501,11 +504,7 @@ class  QujianpanAutomation(BaseOperation):
          
     def preExecution(self):
         print("Enter--------"+sys._getframe().f_code.co_name+"-------")
-
-        self.stat.deviceName = self.deviceName
-        self.stat.AppName = self.__class__.__name__
         self.sleep(10)
-        
         print("--------refuse to update------")#refuse to update
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivClose')
         if element:
@@ -587,16 +586,17 @@ class  QujianpanAutomation(BaseOperation):
             element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[3]")
             if element:      
                 element.click()
-            
+            self.sleep(10)
             element = self.find_element_by_xpath_without_exception(self.driver, '//*[@resource-id="signUpAddBtn"]')
             if element:
                 element.click()
-                self.sleep(2)
+                self.sleep(3)
                 element = self.find_element_by_xpath_without_exception(self.driver, '//*[@resource-id="signUpAddBtn"]')
                 if element:
                     current_activity = self.driver.current_activity
                     element.click()
                     #wait ads pop up 
+                    self.sleep(3)
                     self.watchAdsAndCloseWindow(current_activity)
                     self.sleep(3)
                     self.closeNormalWindow()
@@ -653,7 +653,7 @@ class  QujianpanAutomation(BaseOperation):
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/tt_video_ad_close')
         if element:
             element.click()
-            print("GoOut--------"+sys._getframe().f_code.co_name+"-------")           
+            print("GoOut--------"+sys._getframe().f_code.co_name+"-------1")           
             return True
         
 #       element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭'广告)]")
@@ -669,7 +669,7 @@ class  QujianpanAutomation(BaseOperation):
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.qujianpan.client:id/action_bar_root']/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.view.View")
         if element and element.is_enabled() and element.is_displayed():
            element.click()
-           print("GoOut--------"+sys._getframe().f_code.co_name+"-------")           
+           print("GoOut--------"+sys._getframe().f_code.co_name+"-------2")           
            return True
         
         return False
@@ -718,7 +718,7 @@ if __name__ == '__main__':
        
 
     devices = [('A7QDU18420000828','9')]  
-    #devices = [('SAL0217A28001753','9.1')]     
+    devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
         

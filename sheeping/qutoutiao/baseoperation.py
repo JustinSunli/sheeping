@@ -88,7 +88,7 @@ class BaseOperation:
         # 格式时间成毫秒
         strptime = time.strptime(str_data,"%Y-%m-%d %H:%M:%S")
         #print("strptime",strptime)
-        mktime = int(time.mktime(strptime)*1000)
+        mktime = int(time.mktime(strptime))
         #print("mktime",mktime)
         return mktime    
     def checkExecutionTime(self):
