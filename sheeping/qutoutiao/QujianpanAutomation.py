@@ -390,10 +390,11 @@ class  QujianpanAutomation(BaseOperation):
                     element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="收下了"]')
                     if element:
                         element.click() 
+                        
                                           
-                print("--------not first time in a day-------") #not first time in a day
                 element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="明天再来吧"]')
                 if element:
+                    print("--------not first time in a day-------") #not first time in a day
                     element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.Image[contains(@text,"model_close")]')
                     if element:
                         element.click()                                          
@@ -557,7 +558,7 @@ class  QujianpanAutomation(BaseOperation):
                 self.stat.dailyEndMoney = self.stat.endMoney
             
             #提现
-            if self.stat.startMoney > 150000:
+            if self.stat.startMoney > 1000000:
                 element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/mainCardCatchGlod')
                 element.click()
                 self.sleep(1)
@@ -722,7 +723,7 @@ if __name__ == '__main__':
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
         
-        qujianpan.stat.dailyFirstExecution = True
+        # qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 
           
         t = threading.Thread(target=qujianpan.actAutomation())

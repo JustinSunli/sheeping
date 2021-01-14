@@ -9,6 +9,7 @@ from multiprocessing import Pool
 from time import sleep
 from appium import webdriver
 import json
+import pickle
 import re
 import time
 import os
@@ -34,12 +35,7 @@ from qutoutiao.quanminautomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from qutoutiao.baseoperation import BaseOperation
-class MyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, bytes):
-            return str(obj, encoding='utf-8')
-        
-        return json.JSONEncoder.default(self, obj)
+    
 class Automation():
     def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
         self.deviceName=deviceName
@@ -57,7 +53,7 @@ class Automation():
             return None
         if len(executedList)==0:
             return None
-        sortedList = sorted(executedList, key=lambda x:x['stat']['lastExecutionTime'],reverse = True)
+        sortedList = sorted(executedList, key=lambda x:x.stat.lastExecutionTime,reverse = True)
         return sortedList[0]
     def change_type(self,byte):
         if isinstance(byte,bytes):
@@ -65,13 +61,14 @@ class Automation():
         return json.JSONEncoder.default(byte)
     
     def writeDictionary(self,dictionary,fileName):
-        with open(fileName,'w',encoding='utf-8') as file: 
-            json.dump(dictionary,file,ensure_ascii=False,cls=MyEncoder,indent=4)   
+        with open(fileName,'wb') as file: 
+            pickle.dump(dictionary,file)
+            #json.dump(dictionary,file,ensure_ascii=False,cls=MyEncoder,indent=4)   
             file.close()
     def readDictionary(self,fileName):
         try:
-            with open(fileName,'r',encoding='utf-8') as fileR:   
-                newdict = json.load(fileR)
+            with open(fileName,'rb') as fileR:   
+                newdict = pickle.load(fileR)
                 fileR.close()
                 return newdict
         except Exception:    
@@ -157,7 +154,7 @@ class Automation():
                 else:
                     node.automation.stat.dailyFirstExecution = True
                     
-                node.automation.actAutomation()
+                #node.automation.actAutomation()
                 node.automation.stat.executed = True
                 executionDictionary.get(node.automation.stat.AppName).append(node.automation)                
                 self.writeDictionary(executionDictionary, dictFileName)
@@ -261,7 +258,7 @@ if __name__ == '__main__':
     devices = [('UEUDU16B18012018', '7.0'), ('A7QDU18420000828', '9'), ('PBV0216C02008555', '8.0.0'), ('UEUDU17919005255', '8.0.0'), ('ORL1193020723', '9')]
      
     devices = [('A7QDU18420000828','')]
-    devices = [('UEUDU17919005255','')]
+    #devices = [('UEUDU17919005255','')]
     
 #     readDeviceId = list(os.popen('adb devices').readlines())
 #     devices=[]
