@@ -49,7 +49,7 @@ class  QuanMinAutomation(BaseOperation):
         self.password=password
         self.basecount = 10
         self.currentcount = 0  
-        self.driver = None        
+        self.driver = None         
         
 #         
 #         self.username = username
@@ -68,7 +68,7 @@ class  QuanMinAutomation(BaseOperation):
         self.driver.implicitly_wait(3) #wait time when not find element
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
         self.util = Utils.Utils(self.driver)
-        self.keyboard = keyboards.KeyBoards(self.driver)
+        self.keyboard = KeyBoards.KeyBoards(self.driver)
      
      
     def tearDown(self):
