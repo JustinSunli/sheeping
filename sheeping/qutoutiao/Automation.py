@@ -5,7 +5,6 @@ curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
 
-from multiprocessing import Pool
 from time import sleep
 from appium import webdriver
 import json
@@ -53,7 +52,7 @@ class Automation():
             return None
         if len(executedList)==0:
             return None
-        sortedList = sorted(executedList, key=lambda x:x.stat.lastExecutionTime,reverse = True)
+        sortedList = sorted(executedList, key=lambda x:x.lastExecutionTime,reverse = True)
         return sortedList[0]
     def change_type(self,byte):
         if isinstance(byte,bytes):
@@ -136,7 +135,7 @@ class Automation():
                                  executionDictionary[auto.stat.AppName]=[]
                             lastExecution = self.getLastExecution(executedList)
                             if lastExecution:
-                                auto.stat.lastExecutionTime = lastExecution.stat.lastExecutionTime
+                                auto.stat.lastExecutionTime = lastExecution.lastExecutionTime
                                 
                             node=ExecutionNode(auto.getPriority(),auto)
                             executionQueue.put(node)
@@ -149,14 +148,14 @@ class Automation():
                 executedList = executionDictionary.get(node.automation.stat.AppName);
                 lastExecution = self.getLastExecution(executedList)
                 if lastExecution:
-                    node.automation.stat.lastExecutionTime = lastExecution.stat.lastExecutionTime
+                    node.automation.stat.lastExecutionTime = lastExecution.lastExecutionTime
                     node.automation.stat.dailyFirstExecution = False
                 else:
                     node.automation.stat.dailyFirstExecution = True
                     
-                #node.automation.actAutomation()
+                node.automation.actAutomation()
                 node.automation.stat.executed = True
-                executionDictionary.get(node.automation.stat.AppName).append(node.automation)                
+                executionDictionary.get(node.automation.stat.AppName).append(node.automation.stat)                
                 self.writeDictionary(executionDictionary, dictFileName)
                 executionQueue.queue.clear()
                 
@@ -260,21 +259,22 @@ if __name__ == '__main__':
     devices = [('A7QDU18420000828','')]
     #devices = [('UEUDU17919005255','')]
     
-#     readDeviceId = list(os.popen('adb devices').readlines())
-#     devices=[]
-#     for outputline in readDeviceId:
-#         codes = re.findall(r'(^\w*)\t', outputline)
-#         if len(codes)!=0:
-#             deviceName=codes[0]
-#                
-# #             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
-# #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
-# #             devices.append((deviceName,version))
-#             devices.append((deviceName,""))
+    readDeviceId = list(os.popen('adb devices').readlines())
+    devices=[]
+    for outputline in readDeviceId:
+        codes = re.findall(r'(^\w*)\t', outputline)
+        if len(codes)!=0:
+            deviceName=codes[0]
+                
+#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+#             devices.append((deviceName,version))
+            devices.append((deviceName,""))
                  
     print('Parent process %s.' % os.getpid())
     for (deviceName,version) in devices:
         automation = Automation(deviceName,version)
+        #automation.SheepingDevices()
         t = threading.Thread(target=automation.SheepingDevices)
         t.start()
         

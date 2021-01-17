@@ -25,7 +25,6 @@ from qutoutiao.baseoperation import BaseOperation
 from qutoutiao.baseoperation import AutomationException 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
-from multiprocessing import Pool
 from selenium.webdriver import ActionChains
 from appium.webdriver.common.touch_action import TouchAction
 from selenium.webdriver.common.by import By
@@ -416,6 +415,7 @@ class  QujianpanAutomation(BaseOperation):
                 element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="知道了"]')
                 if element:
                     element.click()  
+                    self.sleep(4)
                     self.watchQuJianPanSmallAdsAndClose()
         self.sleep(6)
         print("--------领取奖励-------")#领取奖励
@@ -719,11 +719,11 @@ if __name__ == '__main__':
        
 
     devices = [('A7QDU18420000828','9')]  
-    devices = [('SAL0217A28001753','9.1')]     
+    #devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
         qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
         
-        # qujianpan.stat.dailyFirstExecution = True
+        qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 
           
         t = threading.Thread(target=qujianpan.actAutomation())

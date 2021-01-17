@@ -63,7 +63,6 @@ class BaseOperation:
 
         self.stat.deviceName = deviceName
         self.stat.AppName = None
-        self.stat.executed = False
         
         self.stat.dailyFirstExecution = False
         self.stat.dailyLastExecution = False 
@@ -72,7 +71,8 @@ class BaseOperation:
         self.stat.dailyEndMoney = None
         
         self.stat.lastExecutionTime = None 
-        self.stat.priority = 0   
+        self.stat.priority = 0  
+        self.stat.executed = False         
         
     def sleep(self,time=0):
         #sleep some seconds
