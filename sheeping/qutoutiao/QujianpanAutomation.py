@@ -16,13 +16,13 @@ import random
 import threading
 import urllib
 import urllib.request 
-from qutoutiao import key_codes
+from qutoutiao import Key_Codes
 from qutoutiao import DriverSwipe
 from qutoutiao import Utils
-from qutoutiao import keyboards
+from qutoutiao import KeyBoards
 import traceback
-from qutoutiao.baseoperation import BaseOperation
-from qutoutiao.baseoperation import AutomationException 
+from qutoutiao.BaseOperation import BaseOperation
+from qutoutiao.BaseOperation import AutomationException 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import ActionChains
@@ -347,7 +347,7 @@ class  QujianpanAutomation(BaseOperation):
         self.driver.implicitly_wait(3) #wait time when not find element
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
         self.util = Utils.Utils(self.driver)
-        self.keyboard = keyboards.KeyBoards(self.driver)
+        self.keyboard = KeyBoards.KeyBoards(self.driver)
         
     def tearDown(self):
         self.driver.quit()

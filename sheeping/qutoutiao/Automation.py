@@ -30,10 +30,10 @@ from qutoutiao.MiduAutomation import MiduAutomation
 from qutoutiao.HuoShanAutomation import HuoShanAutomation
 from qutoutiao.XiangKanAutomation import XiangKanAutomation
 
-from qutoutiao.quanminautomation import QuanMinAutomation
+from qutoutiao.QuanMinAutomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
-from qutoutiao.baseoperation import BaseOperation
+from qutoutiao.BaseOperation import BaseOperation
     
 class Automation():
     def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
@@ -153,7 +153,7 @@ class Automation():
                 else:
                     node.automation.stat.dailyFirstExecution = True
                     
-                node.automation.actAutomation()
+                #node.automation.actAutomation()
                 node.automation.stat.executed = True
                 executionDictionary.get(node.automation.stat.AppName).append(node.automation.stat)                
                 self.writeDictionary(executionDictionary, dictFileName)

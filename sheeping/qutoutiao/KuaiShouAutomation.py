@@ -13,12 +13,12 @@ import random
 import threading
 import urllib
 import urllib.request 
-from qutoutiao import key_codes
+from qutoutiao import Key_Codes
 from qutoutiao import DriverSwipe
 from qutoutiao import Utils
-from qutoutiao import keyboards
+from qutoutiao import KeyBoards
 import traceback
-from qutoutiao.baseoperation import BaseOperation 
+from qutoutiao.BaseOperation import BaseOperation 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import ActionChains

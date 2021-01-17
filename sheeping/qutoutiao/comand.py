@@ -6,3 +6,6 @@
 #adb uninstall io.appium.uiautomator2.server
 #adb uninstall io.appium.uiautomator2.server.test
 
+#git log --oneline -n 10
+
+

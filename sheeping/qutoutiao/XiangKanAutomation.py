@@ -12,9 +12,9 @@ import threading
 from multiprocessing import Pool
 
 from qutoutiao import DriverSwipe
-from qutoutiao.baseoperation import BaseOperation 
+from qutoutiao.BaseOperation import BaseOperation 
 from qutoutiao import Utils
-from qutoutiao import keyboards
+from qutoutiao import KeyBoards
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 

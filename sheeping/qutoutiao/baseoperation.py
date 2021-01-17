@@ -53,6 +53,8 @@ class BaseOperation:
         self.sleepseconds = 5
         self.driver = None
         self.util = None
+        self.driverSwipe = None
+        self.keyboard = None       
         (self.fromHour,self.toHour) = timerange
        
         self.stat = ExecutionStatistics()
@@ -91,6 +93,16 @@ class BaseOperation:
         mktime = int(time.mktime(strptime))
         #print("mktime",mktime)
         return mktime    
+    def unlockTheScreen(self):
+        if self.driver.is_locked():
+            self.driver.lock(1)
+            #
+            self.driverSwipe.SwipeUp()
+            element = self.find_element_by_id_without_exception(self.driver, 'com.android.systemui:id/lockPatternView')
+            if element:
+                #
+                print()
+        
     def checkExecutionTime(self):
         timeStruct = time.localtime(time.time())
         if timeStruct.tm_hour >= self.fromHour and timeStruct.tm_hour < self.toHour:

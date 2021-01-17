@@ -2,7 +2,7 @@
 from time import sleep
 import random
 from qutoutiao import Utils
-from qutoutiao.key_codes import *
+from qutoutiao.Key_Codes import *
 
 class KeyBoards:
     def __init__(self,driver):

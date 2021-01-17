@@ -7,7 +7,7 @@ import os
 import sys
 import math
 import random
-from qutoutiao import key_codes
+from qutoutiao import Key_Codes
 
 class Utils:
     def __init__(self,driver):

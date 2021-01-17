@@ -8,13 +8,13 @@ import sys
 import math
 import random
 import threading
-from qutoutiao import key_codes
+from qutoutiao import Key_Codes
 from qutoutiao import DriverSwipe
 from qutoutiao import Utils
-from qutoutiao import keyboards
+from qutoutiao import KeyBoards
 from selenium.common.exceptions import NoSuchElementException
 import traceback
-from qutoutiao.baseoperation import BaseOperation 
+from qutoutiao.BaseOperation import BaseOperation 
 from selenium.common.exceptions import WebDriverException
 from multiprocessing import Pool
 
