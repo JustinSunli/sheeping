@@ -153,7 +153,7 @@ class Automation():
                 else:
                     node.automation.stat.dailyFirstExecution = True
                     
-                #node.automation.actAutomation()
+                node.automation.actAutomation()
                 node.automation.stat.executed = True
                 executionDictionary.get(node.automation.stat.AppName).append(node.automation.stat)                
                 self.writeDictionary(executionDictionary, dictFileName)
