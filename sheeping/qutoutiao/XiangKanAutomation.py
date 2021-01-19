@@ -63,13 +63,13 @@ class XiangKanAutomation(BaseOperation):
         desired_caps['appPackage'] = 'com.xiangkan.android'
         desired_caps['noReset'] = True
         desired_caps['udid'] = self.deviceName
-        desired_caps['newCommandTimeout'] = 600 #default 60 otherwise quit automatically
+        desired_caps['newCommandTimeout'] = 1000 #default 60 otherwise quit automatically
         desired_caps['appActivity'] = 'com.bikan.reading.activity.SplashActivity'
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
         self.driver.implicitly_wait(3) #wait time when not find element
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
         self.util = Utils.Utils(self.driver)
-        self.keyboard = keyboards.KeyBoards(self.driver)
+        self.keyboard = KeyBoards.KeyBoards(self.driver)
      
     def tearDown(self):
         self.driver.quit()

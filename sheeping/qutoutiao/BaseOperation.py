@@ -1,5 +1,6 @@
 # coding: utf-8
 from time import sleep
+import logging
 import time
 import random
 import traceback 
@@ -74,8 +75,11 @@ class BaseOperation:
         
         self.stat.lastExecutionTime = None 
         self.stat.priority = 0  
-        self.stat.executed = False         
+        self.stat.executed = False
         
+        logging.basicConfig(level = logging.INFO,format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        self.logger = logging.getLogger(__name__)
+
     def sleep(self,time=0):
         #sleep some seconds
         sleep(time+random.randint(0,2000)/1000)
@@ -92,7 +96,12 @@ class BaseOperation:
         #print("strptime",strptime)
         mktime = int(time.mktime(strptime))
         #print("mktime",mktime)
-        return mktime    
+        return mktime 
+    def tearDown(self):
+        apps = ['com.qujianpan.client']
+        for appname in apps:
+            self.driver.terminate_app(appname) 
+               
     def unlockTheScreen(self):
         if self.driver.is_locked():
             self.driver.lock(1)
@@ -101,7 +110,7 @@ class BaseOperation:
             element = self.find_element_by_id_without_exception(self.driver, 'com.android.systemui:id/lockPatternView')
             if element:
                 #
-                print()
+                pass
         
     def checkExecutionTime(self):
         timeStruct = time.localtime(time.time())
@@ -340,7 +349,7 @@ class BaseOperation:
         except NoSuchElementException:
             #print('Element not found')
             #traceback.print_exc()  
-            print()          
+            pass          
                     
         return element 
     
@@ -352,7 +361,7 @@ class BaseOperation:
         except NoSuchElementException:
             #print('Element not found')
             #traceback.print_exc()    
-            print()        
+            pass        
                     
         return element             
     def find_element_by_xpath_without_exception(self,driver, xpath):
@@ -363,7 +372,7 @@ class BaseOperation:
         except NoSuchElementException:
             #print('Element not found')
             #traceback.print_exc()  
-            print()
+            pass
         
         return element    
     
@@ -375,7 +384,7 @@ class BaseOperation:
         except NoSuchElementException:
             #print('Element not found')
             #traceback.print_exc() 
-            print() 
+            pass 
         
         return element  
     def actAutomation(self,basecount=10):

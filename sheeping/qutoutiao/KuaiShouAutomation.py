@@ -69,7 +69,7 @@ class  KuaiShouAutomation(BaseOperation):
         self.driver.implicitly_wait(3) #wait time when not find element
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
         self.util = Utils.Utils(self.driver)
-        self.keyboard = keyboards.KeyBoards(self.driver)
+        self.keyboard = KeyBoards.KeyBoards(self.driver)
      
      
     def tearDown(self):

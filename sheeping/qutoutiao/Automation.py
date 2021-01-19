@@ -30,7 +30,7 @@ from qutoutiao.MiduAutomation import MiduAutomation
 from qutoutiao.HuoShanAutomation import HuoShanAutomation
 from qutoutiao.XiangKanAutomation import XiangKanAutomation
 
-from qutoutiao.QuanMinAutomation import QuanMinAutomation
+#from qutoutiao.QuanMinAutomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from qutoutiao.BaseOperation import BaseOperation
