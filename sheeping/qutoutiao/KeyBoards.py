@@ -393,5 +393,11 @@ class KeyBoards:
     def swip(self,fromPoint,toPoint):
         opts={'command':'input','args':['swipe',fromPoint[0],fromPoint[1],toPoint[0], toPoint[1], '300']}
         self.driver.execute_script("mobile:shell",opts)
+    def closeApp(self,appid):
+        opts={'command':'am','args':['force-stop',appid]}
+        self.driver.execute_script("mobile:shell",opts) 
+    def cleanAppClean(self,appid):
+        opts={'command':'pm','args':['clear',appid]}
+        self.driver.execute_script("mobile:shell",opts)                
 
     

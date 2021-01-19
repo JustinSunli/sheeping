@@ -302,56 +302,18 @@ class  QujianpanAutomation(BaseOperation):
 #####################################################################################################################################        
 #####################################################################################################################################                
     def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
-        super(QujianpanAutomation,self).__init__()
-        #�ռ����� ���ֻ�--����--������ѡ��---ָ��λ��-���������ֶ������Ǹ�webviewԪ�أ��ֻ����Ϸ�����ʾ��x��y������ 
-        #adb not found
-        #netstat -ano|findstr '5037'
-        #tasklist |findstr '15828'
+        super(QujianpanAutomation,self).__init__(deviceName,version,timerange,username,password)
         
-        # adb devices
-        # adb shell pm list package # adb shell pm list package -3 -f 
-        # adb logcat -c // clear logs
-        # adb logcat ActivityManager:I *:s
-        
-        self.deviceName=deviceName
-        self.version=version
-        self.username=username
-        self.password=password
-        self.driver = None
-        
-        self.stat.deviceName = self.deviceName
         self.stat.AppName = self.__class__.__name__
         
-        self.gabageDict = {}
-#         
-#         self.username = username
-#         self.password = password
-    def init_driver(self):
-        desired_caps = {}
-        desired_caps['platformName'] = 'Android'
-        desired_caps['platformVersion'] = self.version
-        desired_caps['deviceName'] = self.deviceName
-        desired_caps['appPackage'] = 'com.qujianpan.client'
-        desired_caps['dontStopAppOnReset'] = True  
-        desired_caps['noReset'] = True
-        desired_caps['udid'] = self.deviceName
-        
-        desired_caps['ignoreUnimportantViews'] = True 
-        #desired_caps['disableAndroidWatchers'] = True  
-        #desired_caps['skipUnlock'] = True 
-        #desired_caps['skipLogcatCapture'] = True  
-        desired_caps['skipServerInstallation'] = True  
-        #desired_caps['unlockType'] = "password"
-        #desired_caps['unlockKey'] = "123456"     
-        
-        desired_caps['newCommandTimeout'] = 600 #default 60 otherwise quit automatically
-        desired_caps['appActivity'] = 'com.qujianpan.client.ui.GuideActivity'
-        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', desired_caps)
-        self.driver.implicitly_wait(3) #wait time when not find element
-        self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
-        self.util = Utils.Utils(self.driver)
-        self.keyboard = KeyBoards.KeyBoards(self.driver)
-        
+        self.gabageDict = {}#         
+
+    def init_driver(self): 
+        self.desired_caps['appPackage'] = 'com.qujianpan.client'        
+        self.desired_caps['appActivity'] = 'com.qujianpan.client.ui.GuideActivity'
+        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', self.desired_caps)
+
+        self.initAfterDriver()       
     def tearDown(self):
         super().tearDown()        
         self.driver.quit()
@@ -625,7 +587,7 @@ class  QujianpanAutomation(BaseOperation):
         #watch ads until it finished
         for iter in range(60):
             #if self.driver.current_activity== 'com.qujianpan.adlib.adcontent.view.video.AdInVideoBaseActivity':
-            self.logger.info(self.driver.current_activity)
+            self.logger.info(self.driver.current_activity+'out')
             if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity','com.innotech.jb.combusiness.web.SignDetailWebActivity']):
                 if self.closeAdsDetails():
                     break
@@ -659,17 +621,7 @@ class  QujianpanAutomation(BaseOperation):
         if element:
             element.click()
             self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------1")           
-            return True
-        
-#       element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭'广告)]")
-#       if element:
-#           element.click()
-#           return True
-#       
-#       element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'关闭')]")
-#       if element:
-#           element.click()
-#           return True        
+            return True    
         
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.qujianpan.client:id/action_bar_root']/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.view.View")
         if element and element.is_enabled() and element.is_displayed():

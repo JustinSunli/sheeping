@@ -5,6 +5,10 @@ import time
 import random
 import traceback 
 import math
+from qutoutiao import Key_Codes
+from qutoutiao import DriverSwipe
+from qutoutiao import Utils
+from qutoutiao import KeyBoards
 from selenium.common.exceptions import NoSuchElementException
 from PIL import Image
 from selenium import webdriver
@@ -14,7 +18,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import sys
 from appium.webdriver.common.touch_action import TouchAction
-
 
 class AutomationException(Exception):
     
@@ -57,19 +60,23 @@ class BaseOperation:
         self.driverSwipe = None
         self.keyboard = None       
         (self.fromHour,self.toHour) = timerange
-       
+        
+        self.deviceName=deviceName
+        self.version=version
+        self.username=username
+        self.password=password
+        
         self.stat = ExecutionStatistics()
         self.stat.startMoney = None
         self.stat.endMoney = None
         self.stat.startTime = None
         self.stat.endTime = None 
-
+        
         self.stat.deviceName = deviceName
         self.stat.AppName = None
-        
+    
         self.stat.dailyFirstExecution = False
-        self.stat.dailyLastExecution = False 
-                 
+        self.stat.dailyLastExecution = False       
         self.stat.dailyStartMoney = None
         self.stat.dailyEndMoney = None
         
@@ -77,9 +84,30 @@ class BaseOperation:
         self.stat.priority = 0  
         self.stat.executed = False
         
+        self.desired_caps = {}
+        self.desired_caps['platformName'] = 'Android'
+        self.desired_caps['platformVersion'] = self.version
+        self.desired_caps['deviceName'] = self.deviceName
+        self.desired_caps['dontStopAppOnReset'] = True  
+        self.desired_caps['noReset'] = True
+        self.desired_caps['udid'] = self.deviceName
+        self.desired_caps['newCommandTimeout'] = 1000 #default 60 otherwise quit automatically
+        self.desired_caps['ignoreUnimportantViews'] = True 
+        #desired_caps['disableAndroidWatchers'] = True  
+        #desired_caps['skipUnlock'] = True 
+        self.desired_caps['skipLogcatCapture'] = True  
+        self.desired_caps['skipServerInstallation'] = True  
+        #desired_caps['unlockType'] = "password"
+        #desired_caps['unlockKey'] = "123456"     
+        
+        #logging control
         logging.basicConfig(level = logging.INFO,format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         self.logger = logging.getLogger(__name__)
-
+    def initAfterDriver(self):
+        self.driver.implicitly_wait(3) #wait time when not find element
+        self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
+        self.util = Utils.Utils(self.driver)
+        self.keyboard = KeyBoards.KeyBoards(self.driver)
     def sleep(self,time=0):
         #sleep some seconds
         sleep(time+random.randint(0,2000)/1000)
@@ -98,7 +126,7 @@ class BaseOperation:
         #print("mktime",mktime)
         return mktime 
     def tearDown(self):
-        apps = ['com.qujianpan.client']
+        apps = ['com.qujianpan.client','com.android.contacts','com.android.settings']
         for appname in apps:
             self.driver.terminate_app(appname) 
                

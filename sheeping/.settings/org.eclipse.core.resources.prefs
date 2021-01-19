@@ -2,6 +2,7 @@ eclipse.preferences.version=1
 encoding//qutoutiao/Automation.py=utf-8
 encoding//qutoutiao/AutomationSmall.py=utf-8
 encoding//qutoutiao/BaseOperation.py=utf-8
+encoding//qutoutiao/Contacts.py=UTF-8
 encoding//qutoutiao/DouYinAutomation.py=utf-8
 encoding//qutoutiao/DriverSwipe.py=utf-8
 encoding//qutoutiao/ExecutionNode.py=utf-8
