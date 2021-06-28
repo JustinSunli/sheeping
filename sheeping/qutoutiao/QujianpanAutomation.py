@@ -24,6 +24,7 @@ from qutoutiao import KeyBoards
 import traceback
 from qutoutiao.BaseOperation import BaseOperation
 from qutoutiao.BaseOperation import AutomationException 
+from qutoutiao.BaseOperation import ExecutionParam
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import ActionChains
@@ -38,271 +39,13 @@ from urllib.request import quote
 from _ast import Raise
 
 class  QujianpanAutomation(BaseOperation):
-    def findTheGabageNameAndDoSort(self,garbageName):
-        #element = self.find_element_by_id_without_exception(self.driver, "garbageName")
-        #garbageName=''
-        gtype = None 
-        if self.gabageDict.get(garbageName):
-            gtype = self.gabageDict[garbageName]
-        else:    
-            try:
-                quotename = quote(garbageName)                        
-                url = 'http://api.choviwu.top/garbage/getGarbage?garbageName={}'.format(quotename)
-                req=urllib.request.urlopen(url)
-                result=req.read()
-                result = json.loads(result)
-                gtype = result['data'][0]['gtype']
-            except:
-                gtype='干垃圾'
-
-        fromelement = self.find_element_by_id_without_exception(self.driver, 'garbageImg')
-        toelement = None
-        if  gtype == '湿垃圾':
-            #move to wet gabage
-            toelement = self.find_element_by_id_without_exception(self.driver, 'garbageBlueCon')
-            print
-        elif gtype == '可回收':
-            #move to recycle
-            toelement = self.find_element_by_id_without_exception(self.driver, 'garbageGreenCon')
-            print
-        elif gtype == '有害垃圾':
-            #move to harmful
-            toelement = self.find_element_by_id_without_exception(self.driver, 'garbageRedCon')
-            print
-        elif gtype == '干垃圾':
-            #move to dry
-            toelement = self.find_element_by_id_without_exception(self.driver, 'garbageGrayCon')
-            print
-        else:
-            toelement = self.find_element_by_id_without_exception(self.driver, 'garbageGrayCon')
-            print
-        
-        self.driver.drag_and_drop(fromelement, toelement)
-        
-        return (garbageName,gtype)
-
-    def gotoGameGabageSort(self):
-        #go to me tab
-        element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[3]")
-        if element:      
-            element.click()
-            
-        #refuse to ads
-        element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivChaiClose')
-        if element:
-            element.click() 
-            
-        #self.driverSwipe.SwipeUp() 
-        sleep(10+random.randint(0,5000)/1000)
-  
-        element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.TextView[@text="分垃圾赚金币"]/../android.widget.TextView[@text="试玩"]')
-        if element:
-            element.click()
-            
-        ele = self.find_element_by_id_without_exception(self.driver, 'tryGameBtn')
-        if ele:
-            ele.click()                    
-            
-#         elements = self.find_elements_by_xpath_without_exception(self.driver, "//android.widget.RelativeLayout/android.widget.LinearLayout/android.support.v7.widget.RecyclerView/android.widget.LinearLayout/android.widget.ImageView")
-#         if len(elements)==0:
-#             return False
-#         iter=0
-#         for element in elements:
-#             if iter==0:
-#                 iter+=1
-#                 continue
-#             
-#             element.click()
-#             ele = self.find_element_by_id_without_exception(self.driver, 'tryGameBtn')
-#             if ele:
-#                 ele.click()
-#                 break
-#             else:
-#                 self.driver.back()
-#                 #note ads vedio page
-#                 element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']")
-#                 if element:
-#                     continue
-#                 else:
-#                     sleep(35)
-#                     self.closeAddsWindow()
-#                     #close gift window
-#                     self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/iv_close').click()
-#                     sleep(1+random.randint(0,3000)/1000)                    
-                    
-        with open('gabageconfig.json','r',encoding='utf-8') as fileR:   
-            self.gabageDict.clear()
-            self.gabageDict = json.load(fileR)
-            #self.gabageDict = json.loads(self.gabageDict,encoding='utf-8')
-            fileR.close()  
-                                
-        element = None
-        iter=0
-        while(iter < 4):
-            iter+=1
-            element = self.find_element_by_id_without_exception(self.driver, 'noTimesAlertBtn')
-            if element:
-                break
-
-            #startBtn
-            startbtn = True
-            element = self.find_element_by_id_without_exception(self.driver, 'startBtn')
-            if not element:
-                element =self.find_element_by_id_without_exception(self.driver, 'continueBtn')
-                startbtn = False 
-            if(element == None):
-                self.driver.back()
-                return False
-            
-            element.click()
-            #sleep(3+random.randint(0,3000)/1000)    
-            while(True):
-                (garbageName,gtype) = ('','')
-                
-                if startbtn:
-                    fromPoint = self.util.centerPoint((387,894), (690,1197))
-                    toPoint = self.util.centerPoint((375,1110), (705,1635))
-                    self.keyboard.swip(fromPoint, toPoint)
-                    startbtn=False
-                
-                element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@resource-id='garbageName']/android.view.View")
-                if not element:
-                    self.driver.back()
-                    return False
-                
-                garbageName = element.text
-            
-                (garbageName,gtype) = self.findTheGabageNameAndDoSort(garbageName)
-                
-                #END correct
-                element = self.find_element_by_id_without_exception(self.driver, 'watchResultBtn2')
-                if element:
-                    self.gabageDict[garbageName] = gtype
-                    self.find_element_by_id_without_exception(self.driver, 'lastAnswerRightAlertClose').click()
-                    #return True
-                #end wrong
-                element = self.find_element_by_id_without_exception(self.driver, 'watchResultBtn1')
-                if element:
-                    self.gabageDict[garbageName] = self.find_element_by_id_without_exception(self.driver, 'lastErrorGarbageType').text
-                    self.find_element_by_id_without_exception(self.driver, 'lastAnswerErrorAlertClose').click()
-                    #return True                
-                
-                element = self.find_element_by_id_without_exception(self.driver, 'coinDoubleBtn')
-                if element:
-                    element.click()
-                    #all corrent
-                    self.gabageDict[garbageName] = gtype
-                    
-                    sleep(40+random.randint(0,5000)/1000)
-                    
-                    #close ads window
-                    self.closeAddsWindow()
-                    #sleep(1+random.randint(0,3000)/1000)
-                    
-                    self.writeGabageDic()
-
-                    #next question
-                    self.find_element_by_id_without_exception(self.driver, 'nextQuestionBtn1').click()
-                    
-                else:
-                    #shit wrong
-                    gtype = self.find_element_by_id_without_exception(self.driver, 'errorGarbageType').text[0:3]
-                    self.gabageDict[garbageName] = gtype
-                    sleep(1+random.randint(0,3000)/1000)
-                    
-                    self.find_element_by_id_without_exception(self.driver, 'reLiveBtn').click()
-                    sleep(1+random.randint(0,3000)/1000)
-                    
-                    #wait ads ends
-                    sleep(40+random.randint(0,5000)/1000)
-                    
-                    #close ads window
-                    self.closeAddsWindow()
-                    #sleep(1+random.randint(0,3000)/1000)
-                    
-                    self.writeGabageDic()
-
-                    self.find_element_by_id_without_exception(self.driver, 'reliveCoinAlertBtn').click()
-                
-            print()    
-        
-            print()
-        return True
-    def writeGabageDic(self):
-        with open('gabageconfig.json','w',encoding='utf-8') as file: 
-            json.dump(self.gabageDict, file, ensure_ascii=False)   
-            file.close()  #关闭文件        
-
-    def getMoney(self):
-        try:
-#           #go to zhuan qian tab
-            element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[2]")
-            if element:      
-                element.click()
-
-            self.driver.switch_to.context('WEBVIEW_com.qujianpan.client')
-#             
-            element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="赚钱"]/android.view.View/android.view.View[2]/android.view.View/android.view.View[1]/android.view.View[3]')
-            if element:
-                self.endMoney = element.text
-        except Exception:
-            self.logger.info('sigin except!')
-            traceback.print_exc()  
-    def lookadsgetgifts(self):
-        #WEBVIEW_com.qujianpan.client
-        sleep(1+random.randint(0,3000)/1000)
-        element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="领取"]')
-        if element and element.is_displayed():
-            element.click()
-
-        while(True):
-            #time gift
-            
-            element=self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@resource-id='header']/android.view.View[2]/android.view.View[2]")
-            if element:
-                element.click()
-
-            #no times left
-            element=self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@resource-id='popTimeRewardCover']/android.view.View[@resource-id='pop_notimes']/android.view.View[@resource-id='pop_konwBtn']")
-            if element and element.is_displayed():
-                element.click()
-                break;
-
-            sleep(1+random.randint(0,3000)/1000)
-            #click ads
-            element = self.find_element_by_id_without_exception(self.driver,'pop_timerStageBtn')
-            if element:
-                element.click()
-            else:
-                self.driver.back()
-                continue
-                
-            sleep(35+random.randint(0,3000)/1000)    
-            #close ads window
-            self.closeAddsWindow()
-            #
-            sleep(1+random.randint(0,3000)/1000)
-            #stay with qujianpan
-            element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="留在趣键盘"]')
-            if element:
-                element.click() 
-                continue 
-                
-            sleep(3+random.randint(0,3000)/1000)                          
-            #close gift window
-            element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/iv_close')
-            if element:
-                element.click()             
-                
-            sleep(1+random.randint(0,3000)/1000) 
-        print()
 #####################################################################################################################################
 #####################################################################################################################################
 #####################################################################################################################################
 #####################################################################################################################################        
 #####################################################################################################################################                
-    def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
-        super(QujianpanAutomation,self).__init__(deviceName,version,timerange,username,password)
+    def __init__(self, executionparam=None,timerange=(0,24)):
+        super(QujianpanAutomation,self).__init__(executionparam)
         
         self.stat.AppName = self.__class__.__name__
         
@@ -311,11 +54,12 @@ class  QujianpanAutomation(BaseOperation):
     def init_driver(self): 
         self.desired_caps['appPackage'] = 'com.qujianpan.client'        
         self.desired_caps['appActivity'] = 'com.qujianpan.client.ui.GuideActivity'
-        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', self.desired_caps)
+        self.driver = webdriver.Remote('http://localhost:%s/wd/hub' % self.port, self.desired_caps)
 
         self.initAfterDriver()       
     def tearDown(self):
-        super().tearDown()        
+        super().tearDown() 
+        self.driver.terminate_app('com.qujianpan.client')        
         self.driver.quit()
     def checkExecutionTime(self):
         if super().checkExecutionTime():
@@ -323,7 +67,7 @@ class  QujianpanAutomation(BaseOperation):
                 return True
         return False        
     def watchQuJianPanSmallAdsAndClose(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")        
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")        
         for iter in range(10):
             if self.driver.current_activity == "com.qujianpan.adlib.adcontent.view.patchad.AdPatchBaseActivity":
                 break
@@ -331,17 +75,17 @@ class  QujianpanAutomation(BaseOperation):
                 self.sleep()
         self.sleep(6)
         self.driver.back()
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")        
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")        
 
     def MoneyBoxn(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")                
-        self.logger.info("--------go to 储蓄罐-------")#go to me tab
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")                
+        self.logger.info("-------"+self.deviceName+"------"+"--------go to 储蓄罐-------")#go to me tab
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[1]")
         if element:      
             element.click()         
 
         if self.stat.dailyFirstExecution:
-            self.logger.info("--------7 日礼包-------")#7 日礼包
+            self.logger.info("-------"+self.deviceName+"------"+"--------7 日礼包-------")#7 日礼包
             element=self.find_element_by_xpath_without_exception(self.driver, '//android.view.View/android.view.View/android.view.View[5]/android.view.View')
             if element:      
                 element.click()                      
@@ -349,7 +93,7 @@ class  QujianpanAutomation(BaseOperation):
                 if element:
                     current_activity = self.driver.current_activity
                     element.click()
-                    self.logger.info("--------watch ads-------") 
+                    self.logger.info("-------"+self.deviceName+"------"+"--------watch ads-------") 
                     self.watchAdsAndCloseWindow(current_activity) 
                     self.sleep(1)
                     element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="收下了"]')
@@ -359,18 +103,18 @@ class  QujianpanAutomation(BaseOperation):
                                           
                 element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="明天再来吧"]')
                 if element:
-                    self.logger.info("--------not first time in a day-------") #not first time in a day
+                    self.logger.info("-------"+self.deviceName+"------"+"--------not first time in a day-------") #not first time in a day
                     element = self.find_element_by_xpath_without_exception(self.driver,'//android.widget.Image[contains(@text,"model_close")]')
                     if element:
                         element.click()                                          
         
         self.sleep(6)
-        self.logger.info("--------collect money-------")#collect money
+        self.logger.info("-------"+self.deviceName+"------"+"--------collect money-------")#collect money
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View/android.view.View/android.view.View[8]')
         if element:
             element.click() 
         self.sleep(6)
-        self.logger.info("--------兑换-------")#兑换
+        self.logger.info("-------"+self.deviceName+"------"+"--------兑换-------")#兑换
         element = self.find_element_by_xpath_without_exception(self.driver,'//*[@text="兑换"]')
         if element:
             element.click()   
@@ -384,7 +128,7 @@ class  QujianpanAutomation(BaseOperation):
                     self.sleep(4)
                     self.watchQuJianPanSmallAdsAndClose()
         self.sleep(6)
-        self.logger.info("--------领取奖励-------")#领取奖励
+        self.logger.info("-------"+self.deviceName+"------"+"--------领取奖励-------")#领取奖励
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View/android.view.View/android.view.View[9]')
         if element:
             element.click() 
@@ -397,7 +141,7 @@ class  QujianpanAutomation(BaseOperation):
             if element:
                 element.click()   
         self.sleep(6)                        
-        self.logger.info("--------每日任务------")#每日任务
+        self.logger.info("-------"+self.deviceName+"------"+"--------每日任务------")#每日任务
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[1]/android.view.View[5]/android.view.View[2]')
         if element:
             element.click() 
@@ -420,13 +164,13 @@ class  QujianpanAutomation(BaseOperation):
                 element.click()
         
         self.sleep(6)   
-        self.logger.info("--------小猪转盘------")#小猪转盘
+        self.logger.info("-------"+self.deviceName+"------"+"--------小猪转盘------")#小猪转盘
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[1]/android.view.View[5]/android.view.View[3]')
         if element:
             element.click() 
             self.sleep(1)        
             for iter in range(15): 
-                self.logger.info("........."+str(iter)+".........")          
+                self.logger.info("-------"+self.deviceName+"------"+"........."+str(iter)+".........")          
                 element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[1]/android.view.View[5]/android.view.View[2]')
                 if element:
                     current_activity = self.driver.current_activity
@@ -435,13 +179,13 @@ class  QujianpanAutomation(BaseOperation):
                     if element:
                         element.click()
                         self.sleep(2)
-                        self.logger.info("--------finished 小猪转盘 , back to main window------")
+                        self.logger.info("-------"+self.deviceName+"------"+"--------finished 小猪转盘 , back to main window------")
                         self.driver.back()
                         break 
                     self.sleep(3)
                     #direct money
                     if self.driver.current_activity == 'com.innotech.jb.combusiness.web.SignDetailWebActivity':
-                        self.logger.info("--------direct money------")
+                        self.logger.info("-------"+self.deviceName+"------"+"--------direct money------")
                         element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[@text="恭喜抽中"]/../android.view.View')
                         if element:
                             element.click()
@@ -449,51 +193,51 @@ class  QujianpanAutomation(BaseOperation):
                         continue
                     #3 seconds ads
                     elif self.driver.current_activity == 'com.qujianpan.adlib.adcontent.view.patchad.AdPatchBaseActivity':
-                        self.logger.info("--------3 seconds ads------")
+                        self.logger.info("-------"+self.deviceName+"------"+"--------3 seconds ads------")
                         self.watchQuJianPanSmallAdsAndClose()
                         continue
                     else:
                         #long ads
-                        self.logger.info("--------long ads------")
+                        self.logger.info("-------"+self.deviceName+"------"+"--------long ads------")
                         self.watchAdsAndCloseWindow(current_activity)
                         continue
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")        
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")        
     
     def closeNormalWindow(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")        
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")        
         #close window if it exists
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/iv_close')                                   
         if element:
             element.click()  
         else:
             self.driver.back()   
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")
          
     def preExecution(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")
         self.sleep(10)
-        self.logger.info("--------refuse to update------")#refuse to update
+        self.logger.info("-------"+self.deviceName+"------"+"--------refuse to update------")#refuse to update
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivClose')
         if element:
             element.click()
         
-        self.logger.info("--------close 提现 ads------")#close 提现 ads
+        self.logger.info("-------"+self.deviceName+"------"+"--------close 提现 ads------")#close 提现 ads
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/new_red_close')
         if element:
             element.click()
         
-        self.logger.info("--------refuse to install ------")#refuse to install 
+        self.logger.info("-------"+self.deviceName+"------"+"--------refuse to install ------")#refuse to install 
         #self.sleep(5)
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/ivChaiClose')
         if element:
             element.click() 
             
-        self.logger.info("--------close home tab show------")#close home tab show
+        self.logger.info("-------"+self.deviceName+"------"+"--------close home tab show------")#close home tab show
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/home_bottom_close')
         if element:
             element.click()               
             
-        self.logger.info("--------go to me tab------")#           #go to me tab
+        self.logger.info("-------"+self.deviceName+"------"+"--------go to me tab------")#           #go to me tab
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[4]")
         if element:      
             element.click() 
@@ -508,10 +252,10 @@ class  QujianpanAutomation(BaseOperation):
         #element=self.find_element_by_xpath_without_exception(self.driver, "//android.support.v7.widget.RecyclerView[@resource-id='com.qujianpan.client:id/jiliTaskrecyclerView']/android.widget.LinearLayout[2]")
         #if element:      
         #    element.click()
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")
        
     def afterExecution(self): 
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")               
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")               
 #           #go to me tab
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.HorizontalScrollView[@resource-id='com.qujianpan.client:id/tl_home']/android.widget.LinearLayout/*[4]")
         if element:      
@@ -543,10 +287,10 @@ class  QujianpanAutomation(BaseOperation):
                         self.driver.back()                 
         #finish the task
         super().afterExecution()                
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")
                 
     def sign(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")
 
         try:
 #           #go to zhuan qian tab
@@ -571,12 +315,12 @@ class  QujianpanAutomation(BaseOperation):
             #self.driver.switch_to.context('WEBVIEW_com.qujianpan.client')                
 #                               
         except Exception:
-            self.logger.info('sigin except!')
+            self.logger.info("-------"+self.deviceName+"------"+'sigin except!')
             traceback.print_exc()              
         
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")
     def watchAdsAndCloseWindow(self, activity):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")                
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")                
         ads_activity = None
         #wait for the ads pop up
         for iter in range(60):
@@ -587,7 +331,7 @@ class  QujianpanAutomation(BaseOperation):
         #watch ads until it finished
         for iter in range(60):
             #if self.driver.current_activity== 'com.qujianpan.adlib.adcontent.view.video.AdInVideoBaseActivity':
-            self.logger.info(self.driver.current_activity+'out')
+            self.logger.info("-------"+self.deviceName+"------"+self.driver.current_activity+'out')
             if self.driver.current_activity in set(['com.bytedance.sdk.openadsdk.activity.TTRewardVideoActivity','com.innotech.jb.combusiness.web.SignDetailWebActivity']):
                 if self.closeAdsDetails():
                     break
@@ -598,7 +342,7 @@ class  QujianpanAutomation(BaseOperation):
                     if self.closeAdsDetails():
                         break                            
             else: #com.iclicash.advlib.ui.front.ADBrowser
-                self.logger.info(self.driver.current_activity)
+                self.logger.info("-------"+self.deviceName+"------"+self.driver.current_activity)
                 self.driver.back()
                 self.sleep(3)
                 if self.closeAdsDetails():
@@ -606,42 +350,42 @@ class  QujianpanAutomation(BaseOperation):
                 if self.driver.current_activity == activity:
                     break
 
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")        
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")        
         
     def closeAddsWindow(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")                
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")                
         for iter in range(2):
             if self.closeAdsDetails():
-                self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------") 
+                self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------") 
                 break
         
     def closeAdsDetails(self):
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")                        
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")                        
         element = self.find_element_by_id_without_exception(self.driver, 'com.qujianpan.client:id/tt_video_ad_close')
         if element:
             element.click()
-            self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------1")           
+            self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------1")           
             return True    
         
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[@resource-id='com.qujianpan.client:id/action_bar_root']/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.RelativeLayout/android.view.View")
         if element and element.is_enabled() and element.is_displayed():
            element.click()
-           self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------2")           
+           self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------2")           
            return True
         
         return False
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")           
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")           
                     
     def actAutomation(self):
         super().actAutomation()
-        self.logger.info("Enter--------"+sys._getframe().f_code.co_name+"-------")                
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------")                
         self.stat.startTime = time.time()
         crashCount=0
         while(True):
             try:
                 super().preExecution()
                 self.init_driver()
-                self.unlockTheScreen()
+                #self.unlockTheScreen()
                 self.preExecution()
                 if self.stat.dailyFirstExecution:
                     self.sign()
@@ -649,19 +393,24 @@ class  QujianpanAutomation(BaseOperation):
                 self.afterExecution()
                 self.tearDown()
                 break
-            except WebDriverException:
-                traceback.print_exc()
-                break        
+#             except WebDriverException:
+#                 traceback.print_exc()
+#                 if self.driver:
+#                     self.tearDown()                  
+#                 break        
             except Exception:
                 traceback.print_exc()         
                 if self.driver:
-                    self.tearDown()  
+                    try:
+                        self.tearDown()  
+                    except Exception:
+                        pass
                 crashCount+=1                    
                 if crashCount > 3:
                     break                             
 
         self.stat.endTime = time.time()
-        self.logger.info("GoOut--------"+sys._getframe().f_code.co_name+"-------")        
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------")        
         
 if __name__ == '__main__':    
 
@@ -675,15 +424,16 @@ if __name__ == '__main__':
     
        
 
-    #devices = [('A7QDU18420000828','9')]  
-    #devices = [('SAL0217A28001753','9.1')]     
+    #devices = [('A7QDU18420000828','9'),('SAL0217A28001753','9.1'),('UEUDU17919005255','8.0.0')]  
+    devices = [('SAL0217A28001753','9.1')]     
     for (deviceName,version) in devices:
-        qujianpan = QujianpanAutomation(deviceName,version,(0,24))  
+        xp=ExecutionParam(deviceName,version,username='18601793121', password='Initial0')
+        qujianpan = QujianpanAutomation(xp,(0,24))  
         
         qujianpan.stat.dailyFirstExecution = True
         qujianpan.stat.dailyLastExecution = False 
           
-        t = threading.Thread(target=qujianpan.actAutomation())
+        t = threading.Thread(target=qujianpan.actAutomation)
         t.start()
         sleep(random.randint(0, 10))
         

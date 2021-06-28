@@ -24,3 +24,5 @@
 #adb shell ps | findstr com.android
 #adb -s UEUDU17919005255 shell am force-stop 'com.kuaishou.nebula'
 #
+#adb  uninstall io.appium.uiautomator2.server
+#adb  uninstall io.appium.uiautomator2.server.test

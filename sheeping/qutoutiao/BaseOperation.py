@@ -18,6 +18,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import sys
 from appium.webdriver.common.touch_action import TouchAction
+from _pylief import NONE
 
 class AutomationException(Exception):
     
@@ -50,9 +51,18 @@ class ExecutionStatistics:
     def __lt__(self,other): 
         return self.priority < other.priority        
 
-
+class ExecutionParam:
+    def __init__(self,deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4723',username='18601793121', password='Initial0'):
+        
+        self.deviceName=deviceName
+        self.version=version
+        self.username=username
+        self.password=password
+        self.port = port
+        self.bootstrapPort=bootstrapPort
+    
 class BaseOperation:   
-    def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
+    def __init__(self, executionparam=None,timerange=(0,24)):
         
         self.sleepseconds = 5
         self.driver = None
@@ -61,10 +71,13 @@ class BaseOperation:
         self.keyboard = None       
         (self.fromHour,self.toHour) = timerange
         
-        self.deviceName=deviceName
-        self.version=version
-        self.username=username
-        self.password=password
+        self.deviceName=executionparam.deviceName
+        self.version=executionparam.version
+        self.username=executionparam.username
+        self.password=executionparam.password
+        self.port = executionparam.port
+        self.bootstrapPort=executionparam.bootstrapPort
+        
         
         self.stat = ExecutionStatistics()
         self.stat.startMoney = None
@@ -72,7 +85,7 @@ class BaseOperation:
         self.stat.startTime = None
         self.stat.endTime = None 
         
-        self.stat.deviceName = deviceName
+        self.stat.deviceName = self.deviceName
         self.stat.AppName = None
     
         self.stat.dailyFirstExecution = False
@@ -91,8 +104,9 @@ class BaseOperation:
         self.desired_caps['dontStopAppOnReset'] = True  
         self.desired_caps['noReset'] = True
         self.desired_caps['udid'] = self.deviceName
-        self.desired_caps['newCommandTimeout'] = 1000 #default 60 otherwise quit automatically
+        self.desired_caps['newCommandTimeout'] = 180 #default 60 otherwise quit automatically
         self.desired_caps['ignoreUnimportantViews'] = True 
+        self.desired_caps['normalizeTagNames'] = True 
         #desired_caps['disableAndroidWatchers'] = True  
         #desired_caps['skipUnlock'] = True 
         self.desired_caps['skipLogcatCapture'] = True  
@@ -126,9 +140,13 @@ class BaseOperation:
         #print("mktime",mktime)
         return mktime 
     def tearDown(self):
-        apps = ['com.qujianpan.client','com.android.contacts','com.android.settings']
-        for appname in apps:
-            self.driver.terminate_app(appname) 
+        try:
+            apps = ['com.android.contacts','com.android.settings']
+            for appname in apps:
+                self.driver.terminate_app(appname)     
+        except Exception:
+            pass
+
                
     def unlockTheScreen(self):
         if self.driver.is_locked():

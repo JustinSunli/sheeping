@@ -22,10 +22,10 @@ from qutoutiao.MiduAutomation import MiduAutomation
 from qutoutiao.HuoShanAutomation import HuoShanAutomation
 from qutoutiao.XiangKanAutomation import XiangKanAutomation
 
-from qutoutiao.quanminautomation import QuanMinAutomation
+from qutoutiao.QuanMinAutomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
-from qutoutiao.baseoperation import BaseOperation
+from qutoutiao.BaseOperation import BaseOperation
         
 def SheepingDevices(device):
     (deviceName,version) = device

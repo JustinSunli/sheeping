@@ -29,6 +29,7 @@ from qutoutiao.KuaiKanDianAutomation import KuaiKanDianAutomation
 from qutoutiao.MiduAutomation import MiduAutomation
 from qutoutiao.HuoShanAutomation import HuoShanAutomation
 from qutoutiao.XiangKanAutomation import XiangKanAutomation
+from qutoutiao.BaseOperation import ExecutionParam
 
 #from qutoutiao.QuanMinAutomation import QuanMinAutomation
 from selenium.common.exceptions import NoSuchElementException
@@ -36,9 +37,8 @@ from selenium.common.exceptions import WebDriverException
 from qutoutiao.BaseOperation import BaseOperation
     
 class Automation():
-    def __init__(self, deviceName='A7QDU18420000828',version='9',timerange=(0,24),username='18601793121', password='Initial0'):
-        self.deviceName=deviceName
-        self.version=version
+    def __init__(self, executionparam=None):
+        self.executionparam = executionparam
             
     def stringToTimeData(self,str_data):
         # 格式时间成毫秒
@@ -71,11 +71,12 @@ class Automation():
                 fileR.close()
                 return newdict
         except Exception:    
-            print(sys.exc_info())              
+            #print(sys.exc_info())
+            pass              
         return None
     
     def SheepingDevices(self):
-        (deviceName,version) = (self.deviceName,self.version)
+        (deviceName,version) = (self.executionparam.deviceName,self.executionparam.version)
         print('Run task %s (%s)...' % (deviceName, os.getpid()))
         start = time.time() 
          
@@ -115,7 +116,7 @@ class Automation():
             QuanjianpanExecutionPlan = [(0,23),(0,23)]
             for (fromTime,toTime) in QuanjianpanExecutionPlan:
                 try:
-                    auto=QujianpanAutomation(deviceName,version,(fromTime,toTime))
+                    auto=QujianpanAutomation(self.executionparam,(fromTime,toTime))
                     auto.stat.lastExecutionTime = self.stringToTimeData(todayString+" 0:0:0")
                     executionList.append(auto)                       
                 except Exception:    
@@ -129,7 +130,8 @@ class Automation():
                 #sheduling the execution
                 for auto in executionList:
                     if not auto.stat.executed:
-                        if auto.checkExecutionTime():
+                        if True:
+                        #if auto.checkExecutionTime():
                             executedList = executionDictionary.get(auto.stat.AppName);
                             if not executedList:
                                  executionDictionary[auto.stat.AppName]=[]
@@ -270,14 +272,23 @@ if __name__ == '__main__':
 #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
 #             devices.append((deviceName,version))
             devices.append((deviceName,""))
-                 
+               
+    devices = [('UEUDU17919005255','8.0.0')] #huawei Honor 6X                  
     print('Parent process %s.' % os.getpid())
+    port = 4723
     for (deviceName,version) in devices:
-        automation = Automation(deviceName,version)
+        
+        
+        bootstrap = port+1
+        xp=ExecutionParam(deviceName,version,str(port),str(bootstrap),username='18601793121', password='Initial0')
+        #os.system("start /b taskkill /F /t /IM node.exe")
+        #os.system("start /b appium -a 127.0.0.1 -p %s -bp %s -U %s" % (port, bootstrap, deviceName))
+        
+        automation = Automation(xp)
         #automation.SheepingDevices()
         t = threading.Thread(target=automation.SheepingDevices)
         t.start()
-        
+        port +=2
         time.sleep(30)        
     print('Waiting for all subprocesses done...')
     
