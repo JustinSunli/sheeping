@@ -18,7 +18,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import sys
 from appium.webdriver.common.touch_action import TouchAction
-from _pylief import NONE
 
 class AutomationException(Exception):
     
@@ -104,13 +103,15 @@ class BaseOperation:
         self.desired_caps['dontStopAppOnReset'] = True  
         self.desired_caps['noReset'] = True
         self.desired_caps['udid'] = self.deviceName
-        self.desired_caps['newCommandTimeout'] = 180 #default 60 otherwise quit automatically
+        self.desired_caps['newCommandTimeout'] = 300#1500 #default 60 otherwise quit automatically
         self.desired_caps['ignoreUnimportantViews'] = True 
         self.desired_caps['normalizeTagNames'] = True 
+        
+        #
         #desired_caps['disableAndroidWatchers'] = True  
         #desired_caps['skipUnlock'] = True 
         self.desired_caps['skipLogcatCapture'] = True  
-        self.desired_caps['skipServerInstallation'] = True  
+        #self.desired_caps['skipServerInstallation'] = True  
         #desired_caps['unlockType'] = "password"
         #desired_caps['unlockKey'] = "123456"     
         
@@ -139,6 +140,11 @@ class BaseOperation:
         mktime = int(time.mktime(strptime))
         #print("mktime",mktime)
         return mktime 
+
+    def possibilityExecution(self,number):
+        randomnumber=random.randint(0,10000)/100;
+        return randomnumber>number
+    
     def tearDown(self):
         try:
             apps = ['com.android.contacts','com.android.settings']
@@ -422,6 +428,17 @@ class BaseOperation:
         
         return element    
     
+    def find_element_by_accessibility_id_without_exception(self,driver, accessid):
+        #   
+        element = None
+        try:
+            element = driver.find_element_by_accessibility_id(accessid)
+        except NoSuchElementException:
+            #print('Element not found')
+            #traceback.print_exc()  
+            pass
+        
+        return element      
     def find_elements_by_xpath_without_exception(self,driver, xpath):
         #   
         element = None

@@ -89,7 +89,7 @@ class  XiMaLaYaAutomation(BaseOperation):
         self.driver.quit()    
     
     def watchVedio(self):
-        point = exists(Template(r"..\imagesrc\tpl1580798064597.png",threshold=0.8))
+        point = watchAdsVedioplate(r"..\imagesrc\tpl1580798064597.png",threshold=0.8))
         if point: 
             touch(point)
             sleep(15 +random.randint(0,5000)/1000)

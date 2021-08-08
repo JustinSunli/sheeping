@@ -20,6 +20,7 @@ import numpy as np
 from queue import PriorityQueue
 from qutoutiao import DriverSwipe, WeChatAutomation
 from qutoutiao.ExecutionNode import ExecutionNode
+from qutoutiao.TouTiaoAutomation import TouTiaoAutomation
 from qutoutiao.QutoutiaoAutomation import QutoutiaoAutomation 
 from qutoutiao.QujianpanAutomation import QujianpanAutomation
 from qutoutiao.ShuabaoAutomation import ShuabaoAutomation
@@ -112,17 +113,25 @@ class Automation():
     #         executionList.append(auto)     
         
         
-            #QuanjianpanExecutionPlan = [(7,23),(7,9),(12,14),(8,23),(18,20),(7,23),(7,23),(7,23)]
-            QuanjianpanExecutionPlan = [(0,23),(0,23)]
-            for (fromTime,toTime) in QuanjianpanExecutionPlan:
+            #ToutiaoExecutionPlan = [(7,23),(7,9),(12,14),(8,23),(18,20),(7,23),(7,23),(7,23)]
+#             ToutiaoExecutionPlan = [(0,23),(0,23)]
+#             for (fromTime,toTime) in ToutiaoExecutionPlan:
+#                 try:
+#                     auto=QujianpanAutomation(self.executionparam,(fromTime,toTime))
+#                     auto.stat.lastExecutionTime = self.stringToTimeData(todayString+" 0:0:0")
+#                     executionList.append(auto)                       
+#                 except Exception:    
+#                     print(sys.exc_info())  
+        
+            ToutiaoExecutionPlan = [(0,23)]
+            for (fromTime,toTime) in ToutiaoExecutionPlan:
                 try:
-                    auto=QujianpanAutomation(self.executionparam,(fromTime,toTime))
+                    auto=TouTiaoAutomation(self.executionparam,(fromTime,toTime))
                     auto.stat.lastExecutionTime = self.stringToTimeData(todayString+" 0:0:0")
                     executionList.append(auto)                       
                 except Exception:    
-                    print(sys.exc_info())  
-        
-        
+                    print(sys.exc_info())          
+            
             np.random.shuffle(executionList)     
             
             for iter in range(1000):
@@ -260,20 +269,26 @@ if __name__ == '__main__':
      
     devices = [('A7QDU18420000828','')]
     #devices = [('UEUDU17919005255','')]
-    
-    readDeviceId = list(os.popen('adb devices').readlines())
-    devices=[]
-    for outputline in readDeviceId:
-        codes = re.findall(r'(^\w*)\t', outputline)
-        if len(codes)!=0:
-            deviceName=codes[0]
-                
-#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
-#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
-#             devices.append((deviceName,version))
-            devices.append((deviceName,""))
-               
-    devices = [('UEUDU17919005255','8.0.0')] #huawei Honor 6X                  
+    devices = [('SAL0217A28001753','9.1')]    
+    devices = [('A7QDU18420000828','')]
+    #devices = [('3LGDU17328005108','')]
+    devices = [('UEU4C16B16004079','')] 
+     
+        
+#     readDeviceId = list(os.popen('adb devices').readlines())
+#     devices=[]
+#     for outputline in readDeviceId:
+#         codes = re.findall(r'(^\w*)\t', outputline)
+#         if len(codes)!=0:
+#             deviceName=codes[0]
+#                  
+# #             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+# #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+# #             devices.append((deviceName,version))
+#             devices.append((deviceName,""))
+             
+    #devices = [('192.168.0.106:5555','9.1')] 
+              
     print('Parent process %s.' % os.getpid())
     port = 4723
     for (deviceName,version) in devices:
