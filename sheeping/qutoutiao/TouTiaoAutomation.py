@@ -78,6 +78,7 @@ class  TouTiaoAutomation(BaseOperation):
             self.driver.back()
         
         #driver.find_element_by_xpath("//*[contains(@content-desc, '再看一个获得')]")
+        self.sleep(3)
         element = self.find_element_by_xpath_without_exception(self.driver, "//*[contains(@content-desc, '再看一个获得')]")
         if element:
             #
@@ -124,22 +125,31 @@ class  TouTiaoAutomation(BaseOperation):
         sleep(sleepseconds+random.randint(0,5000)/1000)
         self.driver.back()
         
+        self.logger.info("-------"+self.deviceName+"------"+"------Watch Vedio--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
         times = random.randint(1,1)
         for iter in range(times):
             self.watchVedio()
         #可能横屏了
         self.driver.back()
 
+        self.logger.info("-------"+self.deviceName+"------"+"------Go to Task--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
         #go to task
         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[3]/android.widget.ImageView")
         if element:
             element.click()
             sleep(2+random.randint(0,3000)/1000)
-        #签到
+            
+            #签到
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Image@text='关闭']")
+            if element:
+                element.click()            
+            #签到
             element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'签到成功')]/following-sibling::android.view.View[4]")
             if element:
                 element.click()
                 
+            
+        self.logger.info("-------"+self.deviceName+"------"+"------open golden ball--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))      
         #open golden ball
         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Image[@text='开宝箱得金币']")
         if element:
@@ -155,7 +165,7 @@ class  TouTiaoAutomation(BaseOperation):
         #y1 = element.location['y'] 
         #action=TouchAction(self.driver).long_press(element)
         
-
+        self.logger.info("-------"+self.deviceName+"------"+"------走路--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))      
        ##走路
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Image[@text='走路赚钱']/../following-sibling::android.view.View[1]")
         if element:       
@@ -179,6 +189,7 @@ class  TouTiaoAutomation(BaseOperation):
                         self.watchAdsVedio()
                     self.driver.back()                        
 
+        self.logger.info("-------"+self.deviceName+"------"+"------吃饭--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))      
         ##吃饭
         element=self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Image[@text='吃饭补贴']/../following-sibling::android.view.View[1]")
         if element:
@@ -200,6 +211,8 @@ class  TouTiaoAutomation(BaseOperation):
                         sleep(2 +random.randint(0,2000)/1000)            
                         self.watchAdsVedio() 
                     self.driver.back()
+                    
+        self.logger.info("-------"+self.deviceName+"------"+"------睡觉赚钱--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))              
          ##睡觉赚钱
         timeStruct = time.localtime(time.time())
         if timeStruct.tm_hour > 8:
@@ -228,6 +241,8 @@ class  TouTiaoAutomation(BaseOperation):
                                 sleep(2 +random.randint(0,2000)/1000)            
                                 self.watchAdsVedio() 
                             self.driver.back()#开心收下
+
+        self.logger.info("-------"+self.deviceName+"------"+"------去睡觉--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))              
 
         timeStruct = time.localtime(time.time())
         if timeStruct.tm_hour > 20:            
@@ -275,6 +290,8 @@ class  TouTiaoAutomation(BaseOperation):
                     if element:
                         break
                     else:
+                        if self.driver.current_activity != '.activity.SplashActivity':
+                            break
                         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Button[contains(@text, '立即')]")
                         if element:
                             break
@@ -334,9 +351,8 @@ if __name__ == '__main__':
 #     devices = [('SAL0217A28001753','9.1')] 
     devices = [('A7QDU18420000828','9.1')]
     devices=[
-             #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
-             #,
-             ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+             ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
+             #,ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
              #,
              #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
              ]
