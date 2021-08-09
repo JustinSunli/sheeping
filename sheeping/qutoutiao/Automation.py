@@ -275,35 +275,51 @@ if __name__ == '__main__':
     devices = [('UEU4C16B16004079','')] 
      
         
-#     readDeviceId = list(os.popen('adb devices').readlines())
+    readDeviceId = list(os.popen('adb devices').readlines())
+    deviceIds=[]
+    for outputline in readDeviceId:
+        codes = re.findall(r'(^\w*)\t', outputline)
+        if len(codes)!=0:
+            deviceName=codes[0]
+                   
+#             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
+#             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
+#             devices.append((deviceName,version))
+            deviceIds.append(deviceName)
+    
 #     devices=[]
-#     for outputline in readDeviceId:
-#         codes = re.findall(r'(^\w*)\t', outputline)
-#         if len(codes)!=0:
-#             deviceName=codes[0]
-#                  
-# #             versionoutput=list(os.popen('adb -s %s shell  getprop ro.build.version.release' % (deviceName)).readlines())
-# #             version = re.findall(r'(^.*)\n', versionoutput[0])[0]
-# #             devices.append((deviceName,version))
-#             devices.append((deviceName,""))
+#     port = 4723
+#     bootstrapPort=4724
+#     for (deviceName,version) in devices:
+#         #     
+#         xp=ExecutionParam(deviceName=deviceName,version=version,port=port,bootstrapPort=bootstrapPort,username='16536703898', password='Initial0')
+#         devices.append(xp)
+    print('Parent process %s.' % os.getpid())    
+    
+    devices=[
+             ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
+             ,ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+             ,ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
+             ,ExecutionParam(deviceName='3LGDU17328005108',version='9',port='4729',bootstrapPort='4730',username='17132126387', password='Initial0')
+             ,ExecutionParam(deviceName='CXDDU16C07003822',version='9',port='4729',bootstrapPort='4730',username='15372499352', password='Initial0')
              
-    #devices = [('192.168.0.106:5555','9.1')] 
-              
-    print('Parent process %s.' % os.getpid())
-    port = 4723
-    for (deviceName,version) in devices:
+             ]
         
+    for device in devices[::-1]:
+        if not device.deviceName in deviceIds:
+            devices.remove(device)
         
-        bootstrap = port+1
-        xp=ExecutionParam(deviceName,version,str(port),str(bootstrap),username='18601793121', password='Initial0')
+    os.system("start /b taskkill /F /t /IM node.exe")
+    for device in devices:
+
         #os.system("start /b taskkill /F /t /IM node.exe")
         #os.system("start /b appium -a 127.0.0.1 -p %s -bp %s -U %s" % (port, bootstrap, deviceName))
-        
-        automation = Automation(xp)
+        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
+        time.sleep(10)        
+        automation = Automation(device)
         #automation.SheepingDevices()
         t = threading.Thread(target=automation.SheepingDevices)
         t.start()
-        port +=2
         time.sleep(30)        
     print('Waiting for all subprocesses done...')
     

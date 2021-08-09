@@ -332,36 +332,33 @@ class  TouTiaoAutomation(BaseOperation):
 if __name__ == '__main__':    
 
     #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
-    #devices = [('DU2YYB14CL003271','4.4.2')]
     devices = [('PBV0216C02008555','8.0')] #huawei P9 
     #devices = [('ORL1193020723','9.1.1')]#Cupai 9
     devices = [('UEUDU17919005255','8.0.0')] #huawei Honor 6X 
-    #devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
-    
-    
-       
-
     #devices = [('A7QDU18420000828','9'),('SAL0217A28001753','9.1'),('UEUDU17919005255','8.0.0')]  
     devices = [('CXDDU16C07003822','9.1'),('UEU4C16B16004079','9.1')]  
     devices = [('UEU4C16B16004079','9.1')]
     devices = [('CXDDU16C07003822','9.1')]
     devices = [('3LGDU17328005108','9.1')]
-    
-      
 #     devices = [('SAL0217A28001753','9.1')] 
     devices = [('A7QDU18420000828','9.1')]
     devices=[
-             ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
+             #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
              #,ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
              #,
-             #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
+             ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
+             ,ExecutionParam(deviceName='3LGDU17328005108',version='9',port='4729',bootstrapPort='4730',username='17132126387', password='Initial0')
              ]
     
     #devices = [('UEU4C16B16004079','9.1')]   
     
     #devices = [('192.168.0.106:5555','9.1')]
-    #devices = [('A7QDU18420000828','9'),('UEU4C16B16004079','8.0.0')]    
+    #devices = [('A7QDU18420000828','9'),('UEU4C16B16004079','8.0.0')]  
+
+    #os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
+        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
+        sleep(10)
         #xp=ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4723',username='18601793121', password='Initial0')
         qujianpan = TouTiaoAutomation(device,(0,24))  
         
