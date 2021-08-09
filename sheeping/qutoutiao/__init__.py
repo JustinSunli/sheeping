@@ -18,4 +18,18 @@
 #adb connect 192.168.0.106:5555
 #adb disconnect 192.168.0.106:5555
 
-#appium -a 127.0.0.1 -p 4723 -bp 4724 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4723 -bp 4724 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4725 -bp 4726 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4727 -bp 4728 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4729 -bp 4730 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4731 -bp 4732 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4733 -bp 4734 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4735 -bp 4736 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4737 -bp 4738 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4739 -bp 4740 --session-override --relaxed-security
+#start /b appium -a 127.0.0.1 -p 4741 -bp 4742 --session-override --relaxed-security
+
+#npm config set registry https://registry.npm.taobao.org
+#npm install appium -g
+#npm update -g npm
+#npm cache clean

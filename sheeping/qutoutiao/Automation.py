@@ -83,7 +83,7 @@ class Automation():
          
         todayDate = time.localtime(time.time())
         todayString = str(todayDate.tm_year)+'-'+str(todayDate.tm_mon)+'-'+str(todayDate.tm_mday)
-        while(True):
+        for iter in range(1):
             todayExecutionTaskFinished = False
             dictFileName = 'executionrecord/'+deviceName+'-'+todayString+'.txt'
             executionDictionary = self.readDictionary(dictFileName)
@@ -152,6 +152,7 @@ class Automation():
                             executionQueue.put(node)
                 
                 if executionQueue.empty():
+                    #重新执行一轮
                     break
                 
                 #execution
@@ -298,11 +299,18 @@ if __name__ == '__main__':
     
     devices=[
              ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
-             ,ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
-             ,ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
-             ,ExecutionParam(deviceName='3LGDU17328005108',version='9',port='4729',bootstrapPort='4730',username='17132126387', password='Initial0')
-             ,ExecutionParam(deviceName='CXDDU16C07003822',version='9',port='4729',bootstrapPort='4730',username='15372499352', password='Initial0')
-             
+             ,
+             ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+             ,
+             ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
+             ,
+             ExecutionParam(deviceName='3LGDU17328005108',version='9',port='4729',bootstrapPort='4730',username='17132126387', password='Initial0')
+             ,
+             ExecutionParam(deviceName='CXDDU16C07003822',version='9',port='4731',bootstrapPort='4732',username='15372499352', password='Initial0')
+             ,
+             ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
+             ,
+             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
         
     for device in devices[::-1]:
