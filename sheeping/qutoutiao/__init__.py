@@ -17,3 +17,5 @@
 #adb tcpip 5555
 #adb connect 192.168.0.106:5555
 #adb disconnect 192.168.0.106:5555
+
+#appium -a 127.0.0.1 -p 4723 -bp 4724 --session-override --relaxed-security
