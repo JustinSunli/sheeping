@@ -33,3 +33,15 @@
 #npm install appium -g
 #npm update -g npm
 #npm cache clean
+
+
+#uiaotumatorviewer 
+
+#C:\Users\Michael\AppData\Local\Android\Sdk\tools\monitor.bat Dump view UI hierarchy for Automator:
+
+#pip install weditor==> python -m weditor
+
+
+#netstat -ano|findstr "4735"
+#tasklist |findstr "进程id号"
+#taskkill /f /t /im "进程id或者进程名称"

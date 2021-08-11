@@ -316,14 +316,13 @@ if __name__ == '__main__':
     for device in devices[::-1]:
         if not device.deviceName in deviceIds:
             devices.remove(device)
-        
+    #close all appium exe
     os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
-
-        #os.system("start /b taskkill /F /t /IM node.exe")
-        #os.system("start /b appium -a 127.0.0.1 -p %s -bp %s -U %s" % (port, bootstrap, deviceName))
+        
         os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
         time.sleep(10)        
+        
         automation = Automation(device)
         #automation.SheepingDevices()
         t = threading.Thread(target=automation.SheepingDevices)

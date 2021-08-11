@@ -95,6 +95,7 @@ class BaseOperation:
         self.stat.lastExecutionTime = None 
         self.stat.priority = 0  
         self.stat.executed = False
+        self.stat.godMonitored=False
         
         self.desired_caps = {}
         self.desired_caps['platformName'] = 'Android'
@@ -143,7 +144,7 @@ class BaseOperation:
 
     def possibilityExecution(self,number):
         randomnumber=random.randint(0,10000)/100;
-        return randomnumber>number
+        return randomnumber<=number
     
     def tearDown(self):
         try:

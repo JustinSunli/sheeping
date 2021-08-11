@@ -127,11 +127,11 @@ class  TouTiaoAutomation(BaseOperation):
         self.driver.back()
         
         self.logger.info("-------"+self.deviceName+"------"+"------Watch Vedio--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
-#         times = random.randint(1,1)
-#         for iter in range(times):
-#             self.watchVedio()
-#         #可能横屏了
-#         self.driver.back()
+        times = random.randint(1,1)
+        for iter in range(times):
+            self.watchVedio()
+        #可能横屏了
+        self.driver.back()
 
         self.logger.info("-------"+self.deviceName+"------"+"------Go to Task--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
         #go to task
@@ -362,17 +362,19 @@ if __name__ == '__main__':
     #devices = [('192.168.0.106:5555','9.1')]
     #devices = [('A7QDU18420000828','9'),('UEU4C16B16004079','8.0.0')]  
 
-    #os.system("start /b taskkill /F /t /IM node.exe")
+    #close existed appium processes
+    os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
-#         os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
-#         sleep(10)
+        #start appium.exe
+        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
+        sleep(10)
         #xp=ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4723',username='18601793121', password='Initial0')
-        qujianpan = TouTiaoAutomation(device,(0,24))  
+        toutiaoAuto = TouTiaoAutomation(device,(0,24))  
         
-        qujianpan.stat.dailyFirstExecution = True
-        qujianpan.stat.dailyLastExecution = False 
+        toutiaoAuto.stat.dailyFirstExecution = True
+        toutiaoAuto.stat.dailyLastExecution = False 
           
-        #qujianpan.actAutomation()         
-        t = threading.Thread(target=qujianpan.actAutomation)
+        #toutiaoAuto.actAutomation()         
+        t = threading.Thread(target=toutiaoAuto.actAutomation)
         t.start()
         sleep(random.randint(0, 10))
