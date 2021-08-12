@@ -124,9 +124,9 @@ class BaseOperation:
         self.driverSwipe = DriverSwipe.driverSwipe(self.driver)
         self.util = Utils.Utils(self.driver)
         self.keyboard = KeyBoards.KeyBoards(self.driver)
-    def sleep(self,time=0):
+    def sleep(self,time=0,randIdex=2):
         #sleep some seconds
-        sleep(time+random.randint(0,2000)/1000)
+        sleep(time+random.randint(0,randIdex*1000)/1000)
         
     def preExecution(self):
         self.stat.startTime = time.time()

@@ -13,7 +13,7 @@
 
 #adb connect连接设备很慢，需要用以下命令
 
-#adb usb
+#adb -s SAL0217A28001753 usb
 #adb tcpip 5555
 #adb connect 192.168.0.106:5555
 #adb disconnect 192.168.0.106:5555

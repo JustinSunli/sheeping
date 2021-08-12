@@ -252,29 +252,6 @@ class Automation():
               
             
 if __name__ == '__main__':   
-    devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1'),('A7QDU18420000828','9.0'),('SAL0217A28001753','9.1')]
-         
-    devices = [('ORL1193020723','9.1.1')]#Cupai 9
-    #devices = [('PBV0216C02008555','8.0')] #huawei P9
-    #devices = [('UEUDU17919005255','8.1.1')] #huawei Honor 6X
-    devices = [('UEU4C16B16004079','8.1.1.1')] #huawei Honor 6X 
-#   #  
-#   #
-    #devices = [('A7QDU18420000828','9.0')]  
-    #devices = [('SAL0217A28001753','9.1')]       
-    #device=(deviceName,version) = devices[0]
-    #SheepingDevices(device)
-    #devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1'),('A7QDU18420000828','9.0'),('SAL0217A28001753','9.1')]
-    devices = [('ORL1193020723','9.1.1'),('PBV0216C02008555','8.0'),('UEUDU17919005255','8.1.1'),('UEU4C16B16004079','8.1.1.1')]
-    devices = [('UEUDU16B18012018', '7.0'), ('A7QDU18420000828', '9'), ('PBV0216C02008555', '8.0.0'), ('UEUDU17919005255', '8.0.0'), ('ORL1193020723', '9')]
-     
-    devices = [('A7QDU18420000828','')]
-    #devices = [('UEUDU17919005255','')]
-    devices = [('SAL0217A28001753','9.1')]    
-    devices = [('A7QDU18420000828','')]
-    #devices = [('3LGDU17328005108','')]
-    devices = [('UEU4C16B16004079','')] 
-     
         
     readDeviceId = list(os.popen('adb devices').readlines())
     deviceIds=[]
@@ -288,13 +265,6 @@ if __name__ == '__main__':
 #             devices.append((deviceName,version))
             deviceIds.append(deviceName)
     
-#     devices=[]
-#     port = 4723
-#     bootstrapPort=4724
-#     for (deviceName,version) in devices:
-#         #     
-#         xp=ExecutionParam(deviceName=deviceName,version=version,port=port,bootstrapPort=bootstrapPort,username='16536703898', password='Initial0')
-#         devices.append(xp)
     print('Parent process %s.' % os.getpid())    
     
     devices=[
@@ -310,7 +280,7 @@ if __name__ == '__main__':
              ,
              ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
              ,
-             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+             #ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
         
     for device in devices[::-1]:
@@ -320,7 +290,7 @@ if __name__ == '__main__':
     os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
         
-        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
+        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
         time.sleep(10)        
         
         automation = Automation(device)

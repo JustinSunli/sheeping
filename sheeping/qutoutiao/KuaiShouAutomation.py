@@ -67,13 +67,17 @@ class  KuaiShouAutomation(BaseOperation):
         return False
     
     def doTasks(self):  
-        self.sleep(1)
+        self.sleep(3)
         self.driverSwipe.SwipeUp()
-        self.sleep(1)          
+        self.sleep(2)          
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='立即签到']")
         if element:
             element.click()
             self.driver.back()
+        #好友收益   
+        element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='我的收益']/../preceding-sibling::android.view.View[1]")
+        if element:
+            element.click()
         
         element =  self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='去签到']")
         #self.find_element_by_id_without_exception(self.driver,'//android.view.View[contains(@text,"去签到")]')
@@ -125,7 +129,7 @@ class  KuaiShouAutomation(BaseOperation):
     def watchvedios(self,number):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
         sleepseconds=5
-        sleep(sleepseconds+random.randint(0,5000)/1000)     
+        sleep(sleepseconds+15+random.randint(0,5000)/1000)     
         #我知道了
         element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/positive')
         if element:
@@ -153,7 +157,7 @@ class  KuaiShouAutomation(BaseOperation):
             self.doTasks()
         #self.keyboard.clickAPoint((248,534), (484,804))  
         sleepseconds = 5
-        fixedcomments=['cool','哈哈哈哈','太有才了','真形象','very good','nice','真他娘的好','惊掉了下巴','太他妈的有才了','喜欢','爱了，爱了','这么优秀，我只能关注了']        
+        fixedcomments=['cool','哈哈哈哈','太有才了','真形象','very good','nice','真他娘好','惊掉了下巴','太他妈有才了','喜欢','爱了，爱了','这么优秀，我只能关注了']        
         for iter in range(number):
             self.driverSwipe.SwipeUp()
             
@@ -205,10 +209,8 @@ class  KuaiShouAutomation(BaseOperation):
 
                         self.driver.back()
             
-#            element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
-#            if element:
-#                self.crack()
-            if self.possibilityExecution(100): 
+
+            if self.possibilityExecution(20): 
                 element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/circular_progress_bar')
                 if element:
                     element.click() 
@@ -241,7 +243,10 @@ class  KuaiShouAutomation(BaseOperation):
             try:
                 self.init_driver()
                 self.watchvedios(self.basecount)
-                self.tearDown()
+                try:
+                    self.tearDown()
+                except Exception:
+                    traceback.print_exc()    
                 break
             except WebDriverException:
                 traceback.print_exc()
@@ -258,21 +263,10 @@ class  KuaiShouAutomation(BaseOperation):
     
 if __name__ == '__main__':    
 
-    #devices = [('DU2YYB14CL003271','4.4.2'),('A7QDU18420000828','9'),('SAL0217A28001753','9')]
-    devices = [('PBV0216C02008555','8.0')] #huawei P9 
-    #devices = [('ORL1193020723','9.1.1')]#Cupai 9
-    devices = [('UEUDU17919005255','8.0.0')] #huawei Honor 6X 
-    #devices = [('A7QDU18420000828','9'),('SAL0217A28001753','9.1'),('UEUDU17919005255','8.0.0')]  
-    devices = [('CXDDU16C07003822','9.1'),('UEU4C16B16004079','9.1')]  
-    devices = [('UEU4C16B16004079','9.1')]
-    devices = [('CXDDU16C07003822','9.1')]
-    devices = [('3LGDU17328005108','9.1')]
-#     devices = [('SAL0217A28001753','9.1')] 
-    devices = [('A7QDU18420000828','9.1')]
     devices=[
-             #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
+             ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
              #,
-             ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+             #ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
              #,
              #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
              #,
@@ -287,13 +281,12 @@ if __name__ == '__main__':
     #devices = [('UEU4C16B16004079','9.1')]   
     
     #devices = [('192.168.0.106:5555','9.1')]
-    #devices = [('A7QDU18420000828','9'),('UEU4C16B16004079','8.0.0')]  
     
     #close existed appium processes
     os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
         #start appium.exe
-        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s" % (device.port, device.bootstrapPort))
+        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
         sleep(10)
         #
         toutiaoAuto = KuaiShouAutomation(device,(0,24))  
