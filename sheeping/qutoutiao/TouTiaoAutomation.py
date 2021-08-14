@@ -70,34 +70,49 @@ class  TouTiaoAutomation(BaseOperation):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
         
         #point = exists(Template(r"..\imagesrc\tpl1580907022260.png",threshold=0.8))
-        sleep(22 +random.randint(0,5000)/1000)
-#         element = self.find_element_by_xpath_without_exception(self.driver, "//com.lynx.tasm.behavior.ui.text.UIText[@text='关闭']")
-#         if element:
-#             element.click()
-#         else:
-#             self.driver.back()
+        self.sleep(10,3)
+        #pretend to download
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//*[@text='免费下载']")
+            if element:
+                element.click()
+                self.sleep(3,3)
+                self.driver.back()
+        #pretend
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//*[@text='查看详情']")
+            if element:
+                element.click()
+                self.sleep(2)
+                if self.possibilityExecution(30):
+                    for iter in range(random.randint(1,4)):
+                        self.driverSwipe.SwipeUpALittle()
+                        self.sleep(2)
+                self.driver.back()
+        self.sleep(10,3)
         
         self.driver.back()
         #driver.find_element_by_xpath("//*[contains(@content-desc, '再看一个获得')]")
         self.sleep(3)
-        element = self.find_element_by_xpath_without_exception(self.driver, "//*[contains(@content-desc, '再看一个获得')]")
-        if element:
-            #
-            text = element.text#再看一个获得1200金币
-            text=text[6:len(text)-2]
-            goldnumber = int(text)
-            if goldnumber > 1000:
-                element.click()
-                self.watchAdsVedio()
-            else:
-                element = self.find_element_by_accessibility_id_without_exception(self.driver, "坚持退出")
-                if element:
-                    element.click()
-                    return
-        else:
-            element = self.find_element_by_accessibility_id_without_exception(self.driver, "坚持退出")
+        if self.possibilityExecution(80):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//*[contains(@content-desc, '再看一个获得')]")
             if element:
-                element.click()
+                #
+                text = element.text#再看一个获得1200金币
+                text=text[6:len(text)-2]
+                goldnumber = int(text)
+                if goldnumber > 1000:
+                    element.click()
+                    self.watchAdsVedio()
+#             else:
+#                 element = self.find_element_by_accessibility_id_without_exception(self.driver, "坚持退出")
+#                 if element:
+#                     element.click()
+#                     return
+#         else:
+        element = self.find_element_by_accessibility_id_without_exception(self.driver, "坚持退出")
+        if element:
+            element.click()
         
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
                 
@@ -127,7 +142,7 @@ class  TouTiaoAutomation(BaseOperation):
         self.driver.back()
         
         self.logger.info("-------"+self.deviceName+"------"+"------Watch Vedio--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
-        times = random.randint(1,1)
+        times = random.randint(1,3)
         for iter in range(times):
             self.watchVedio()
         #可能横屏了
@@ -190,7 +205,7 @@ class  TouTiaoAutomation(BaseOperation):
                         element.click()
                         sleep(2 +random.randint(0,2000)/1000)            
                         self.watchAdsVedio()
-                    self.driver.back()                        
+                self.driver.back()                        
 
         self.logger.info("-------"+self.deviceName+"------"+"------吃饭--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))      
         ##吃饭
@@ -213,7 +228,7 @@ class  TouTiaoAutomation(BaseOperation):
                         element.click()
                         sleep(2 +random.randint(0,2000)/1000)            
                         self.watchAdsVedio() 
-                    self.driver.back()
+                self.driver.back()
                     
         self.logger.info("-------"+self.deviceName+"------"+"------睡觉赚钱--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))              
          ##睡觉赚钱
@@ -243,7 +258,7 @@ class  TouTiaoAutomation(BaseOperation):
                                 element.click()
                                 sleep(2 +random.randint(0,2000)/1000)            
                                 self.watchAdsVedio() 
-                            self.driver.back()#开心收下
+                    self.driver.back()#开心收下
 
         self.logger.info("-------"+self.deviceName+"------"+"------去睡觉--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))              
 
@@ -338,19 +353,19 @@ class  TouTiaoAutomation(BaseOperation):
 if __name__ == '__main__':    
 
     devices=[
-             #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
-             #,
-             #ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
-             #,
-             #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
-             #,
-             #ExecutionParam(deviceName='3LGDU17328005108',version='9',port='4729',bootstrapPort='4730',username='17132126387', password='Initial0')
-             #,
-             #ExecutionParam(deviceName='CXDDU16C07003822',version='9',port='4731',bootstrapPort='4732',username='15372499352', password='Initial0')
-             #,
-             #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
-             #,
-             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+          #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
+          #,
+          ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+          #,
+          #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
+          #,
+          #ExecutionParam(deviceName='3LGDU17328005108',version='9',port='4729',bootstrapPort='4730',username='17132126387', password='Initial0')
+          #,
+          #ExecutionParam(deviceName='CXDDU16C07003822',version='9',port='4731',bootstrapPort='4732',username='15372499352', password='Initial0')
+          #,
+          #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
+          #,
+          # ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
     
     #devices = [('UEU4C16B16004079','9.1')]       
@@ -358,18 +373,18 @@ if __name__ == '__main__':
 
 
     #close existed appium processes
-    os.system("start /b taskkill /F /t /IM node.exe")
+    #os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
         #start appium.exe
-        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
-        sleep(10)
+        #os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
+        #sleep(10)
         #xp=ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4723',username='18601793121', password='Initial0')
-        toutiaoAuto = TouTiaoAutomation(device,(0,24))  
+        auto = TouTiaoAutomation(device,(0,24))  
         
-        toutiaoAuto.stat.dailyFirstExecution = True
-        toutiaoAuto.stat.dailyLastExecution = False 
+        auto.stat.dailyFirstExecution = True
+        auto.stat.dailyLastExecution = False 
           
         #toutiaoAuto.actAutomation()         
-        t = threading.Thread(target=toutiaoAuto.actAutomation)
+        t = threading.Thread(target=auto.actAutomation)
         t.start()
         sleep(random.randint(0, 10))

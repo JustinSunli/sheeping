@@ -1,4 +1,6 @@
 # coding: utf-8
+import traceback
+
 class driverSwipe(object):
 
     def __init__(self, driver):
@@ -7,11 +9,16 @@ class driverSwipe(object):
         self.height = self.driver.get_window_size().get('height')
     
     def SwipeUp(self):
-        self.driver.swipe(self.width / 2, self.height * 3/ 4, self.width /2 , self.height /4)
+        try:
+            self.driver.swipe(self.width / 2, self.height * 3/ 4, self.width /2 , self.height /4)
+        except Exception:
+                traceback.print_exc()              
 
     def SwipeUpALittle(self):
-        self.driver.swipe(self.width / 2, self.height * 5/ 6, self.width /2 , self.height * 4 / 6)
-
+        try:
+            self.driver.swipe(self.width / 2, self.height * 5/ 6, self.width /2 , self.height * 4 / 6)
+        except Exception:
+                traceback.print_exc()  
     def SwipeDown(self):
         self.driver.swipe(self.width / 2,self.height /4 , self.width /2 , self.height * 3/ 4)
 

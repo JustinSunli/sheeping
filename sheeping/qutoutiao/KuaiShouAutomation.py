@@ -66,15 +66,17 @@ class  KuaiShouAutomation(BaseOperation):
                 return True
         return False
     
-    def doTasks(self):  
+    def doTasks(self): 
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
+         
         self.sleep(3)
         self.driverSwipe.SwipeUp()
         self.sleep(2)          
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='立即签到']")
         if element:
             element.click()
-            self.driver.back()
-        #好友收益   
+            #if self.driver.back()
+        #好友收益   parent::   
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='我的收益']/../preceding-sibling::android.view.View[1]")
         if element:
             element.click()
@@ -83,7 +85,7 @@ class  KuaiShouAutomation(BaseOperation):
         #self.find_element_by_id_without_exception(self.driver,'//android.view.View[contains(@text,"去签到")]')
         if element:
             element.click()              
-            self.driver.back() 
+            #if self.driver.back() 
             
         #open golden ball
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='开宝箱得金币']")
@@ -114,8 +116,8 @@ class  KuaiShouAutomation(BaseOperation):
                 element.click()             
                 idx = random.randint(2,5)
                 for iter in range(idx):
-                    for iterb in range(10):
-                        self.sleep(6)
+                    for iterb in range(5):
+                        self.sleep(5)
                     self.driverSwipe.SwipeUp()
                 
                 self.driver.back()
@@ -126,7 +128,8 @@ class  KuaiShouAutomation(BaseOperation):
         
         #quit the page
         self.driver.back()
-    def watchvedios(self,number):
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                    
+    def mainAutomation(self,number):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
         sleepseconds=5
         sleep(sleepseconds+15+random.randint(0,5000)/1000)     
@@ -148,9 +151,10 @@ class  KuaiShouAutomation(BaseOperation):
         
         element = self.find_element_by_xpath_without_exception(self.driver,'//android.webkit.WebView[@text="拖动滑块"]')
         if element:
-            self.stat.godMonitored=True          
-        
-        self.sleep(2)
+            self.stat.godMonitored=True  
+                    
+        self.driverSwipe.SwipeUpALittle()
+        self.sleep(5)
         element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/circular_progress_bar')
         if element:
             element.click() 
@@ -160,7 +164,11 @@ class  KuaiShouAutomation(BaseOperation):
         fixedcomments=['cool','哈哈哈哈','太有才了','真形象','very good','nice','真他娘好','惊掉了下巴','太他妈有才了','喜欢','爱了，爱了','这么优秀，我只能关注了']        
         for iter in range(number):
             self.driverSwipe.SwipeUp()
-            
+            #
+            element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/like_icon')
+            if not element:   
+                #直播
+                self.driverSwipe.SwipeUp()      
             #sometimes pause
             if random.randint(0,1024) % 17 ==0:
                 sleep(sleepseconds+sleepseconds+random.randint(0,15000)/1000)
@@ -242,7 +250,7 @@ class  KuaiShouAutomation(BaseOperation):
         while(True):
             try:
                 self.init_driver()
-                self.watchvedios(self.basecount)
+                self.mainAutomation(self.basecount)
                 try:
                     self.tearDown()
                 except Exception:
@@ -264,7 +272,7 @@ class  KuaiShouAutomation(BaseOperation):
 if __name__ == '__main__':    
 
     devices=[
-             ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
+             #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
              #,
              #ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
              #,
@@ -276,25 +284,25 @@ if __name__ == '__main__':
              #,
              #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
              #,
-             #ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
     #devices = [('UEU4C16B16004079','9.1')]   
     
     #devices = [('192.168.0.106:5555','9.1')]
     
     #close existed appium processes
-    os.system("start /b taskkill /F /t /IM node.exe")
+#     os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
         #start appium.exe
-        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
-        sleep(10)
+#         os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
+#         sleep(10)
         #
-        toutiaoAuto = KuaiShouAutomation(device,(0,24))  
+        auto = KuaiShouAutomation(device,(0,24))  
         
-        toutiaoAuto.stat.dailyFirstExecution = True
-        toutiaoAuto.stat.dailyLastExecution = False 
+        auto.stat.dailyFirstExecution = True
+        auto.stat.dailyLastExecution = False 
           
         #toutiaoAuto.actAutomation()         
-        t = threading.Thread(target=toutiaoAuto.actAutomation)
+        t = threading.Thread(target=auto.actAutomation)
         t.start()
         sleep(random.randint(0, 10))

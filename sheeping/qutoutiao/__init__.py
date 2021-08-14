@@ -45,3 +45,20 @@
 #netstat -ano|findstr "4735"
 #tasklist |findstr "进程id号"
 #taskkill /f /t /im "进程id或者进程名称"
+
+
+
+#在微信任何聊天窗口输入debugx5.qq.com
+#点击debugx5.qq.com，打开微信的x5内核调试页面，然后切到信息页签，勾选”是否打开TBS内核Inspector调试功能”
+#微信公众号 or 小程序  androidProcess
+#adb -s SAL0217A28001753 shell dumpsys activity top| findstr ACTIVITY
+#adb -s SAL0217A28001753 shell ps 26387
+
+#error: The instrumentation process cannot be initialized. Make sure the application under test does.
+#adb -s SAL0217A28001753 uninstall io.appium.settings
+##adb -s SAL0217A28001753 uninstall io.appium.uiautomator2.server.test
+
+
+
+
+
