@@ -78,6 +78,7 @@ class  QiMaoAutomation(BaseOperation):
             if element:       
                 element.click()  
             
+            self.sleep(2)
             if self.driver.current_activity!=defaultActivity:
                 self.watchAdsVedio(defaultActivity)     
 
@@ -89,9 +90,10 @@ class  QiMaoAutomation(BaseOperation):
             self.sleep(2)
             element = self.find_element_by_xpath_without_exception(self.driver,"//*[contains(@text,'看小视频再领')]")
             if element:
+                currentActivity=self.driver.current_activity
                 element.click() 
                 self.sleep(3)
-                self.watchAdsVedio('.webview.ui.DefaultX5WebActivity')  
+                self.watchAdsVedio(currentActivity)  
                 
     def watchNovels(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
@@ -159,58 +161,62 @@ class  QiMaoAutomation(BaseOperation):
         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='我的']")
         if element:
             element.click()   
-            
-        #幸运大转盘
-        if self.stat.dailyFirstExecution:
-            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='幸运大转盘']")
-            if element:
-                element.click()
-                self.sleep(1)
-                count=5
-                #ads number
-                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'今日剩余抽奖次数')]")
-                if element:
-                    txt = element.text
-                    count = int( txt[len(txt)-1:len(txt)] )
-                for iter in range(count):
-                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@content-desc,'javascript')]")
-                    if element:
-                        element.click()
-                        self.sleep(3)
-                        element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='好的']")
-                        if element:                        
-                            element.click() 
-                            continue 
-                        self.sleep(2)                                                    
-                        if self.driver.current_activity != '.webview.ui.DefaultX5WebActivity':
-                            self.watchAdsVedio('.webview.ui.DefaultX5WebActivity')
-                            
-
-                self.driver.back()
-                
-        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='福利中心']")
-        if element:
-            element.click() 
-            self.sleep(3) 
-            
-            #签到
-            #在领50金币
-            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[contains(@text,'看小视频再领')]")
-            if element:
-                element.click() 
-                self.watchAdsVedio('.webview.ui.DefaultX5WebActivity')  
-            
-            #watch a ads
-            element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'去观看')]")
-            if element:
-                element.click()  
-                self.watchAdsVedio('.webview.ui.DefaultX5WebActivity') 
-                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'可领取')]")
+            self.sleep(3)
+            #幸运大转盘
+            if self.stat.dailyFirstExecution:
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='幸运大转盘']")
                 if element:
                     element.click()
+                    self.sleep(1)
+                    count=5
+                    #ads number
+                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'今日剩余抽奖次数')]")
+                    if element:
+                        txt = element.text
+                        count = int( txt[len(txt)-1:len(txt)] )
+                    for iter in range(count): 
+                        #element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'javascript')]")
+                        element = self.find_element_by_xpath_without_exception(self.driver,"//*[@resource-id='app']/android.view.View[1]/android.view.View[1]/android.view.View[4]/android.view.View[3]")                        
+                        if element:
+                            currentActivity=self.driver.current_activity
+                            element.click()
+                            self.sleep(3)                                                     
+                            if self.driver.current_activity != currentActivity:
+                                self.watchAdsVedio(currentActivity)
+                                
+                            element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='好的']")
+                            if element:                        
+                                element.click() 
+                                continue                                
+    
+                    self.driver.back()
+                
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='福利中心']")
+            if element:
+                element.click() 
+                self.sleep(3) 
+                
+                #签到
+                #在领50金币
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[contains(@text,'看小视频再领')]")
+                if element:
+                    currentActivity=self.driver.current_activity
+                    element.click() 
+                    self.watchAdsVedio(currentActivity)  
+                
+                #watch a ads
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'去观看')]")
+                if element:
+                    currentActivity=self.driver.current_activity
+                    element.click()  
+                    self.sleep(2)
+                    self.watchAdsVedio(currentActivity) 
+                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'可领取')]")
+                    if element:
+                        element.click()
             
-            #看小说金币
-            self.goToGetReadMoney()           
+                #看小说金币
+                self.goToGetReadMoney()           
         
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
       
@@ -265,11 +271,11 @@ if __name__ == '__main__':
     #devices = [('192.168.0.106:5555','9.1')]
 
     #close existed appium processes
-    os.system("start /b taskkill /F /t /IM node.exe")
+    #os.system("start /b taskkill /F /t /IM node.exe")
     for device in devices:
         #start appium.exe
-        os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
-        sleep(10)
+#         os.system("start /b appium -a 127.0.0.1 -p %s -bp %s --session-override --relaxed-security" % (device.port, device.bootstrapPort))
+#         sleep(10)
         #xp=ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4723',username='18601793121', password='Initial0')
         qimao = QiMaoAutomation(device,(0,24))  
         
