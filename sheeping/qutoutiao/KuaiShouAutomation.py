@@ -68,9 +68,7 @@ class  KuaiShouAutomation(BaseOperation):
     
     def doTasks(self): 
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
-         
         self.sleep(3)
-        self.driverSwipe.SwipeUp()
         self.sleep(2)          
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='立即签到']")
         if element:
@@ -80,6 +78,9 @@ class  KuaiShouAutomation(BaseOperation):
         element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='我的收益']/../preceding-sibling::android.view.View[1]")
         if element:
             element.click()
+        self.sleep(1)
+        self.driverSwipe.SwipeUp()
+        self.sleep(1)
         
         element =  self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='去签到']")
         #self.find_element_by_id_without_exception(self.driver,'//android.view.View[contains(@text,"去签到")]')
@@ -99,7 +100,7 @@ class  KuaiShouAutomation(BaseOperation):
             
         if self.possibilityExecution(40):
             ##看福利广告
-            idx = random.randint(2,5)
+            idx = random.randint(3,5)
             for iter in range(idx):  
                 element=self.find_element_by_xpath_without_exception(self.driver,"//android.widget.Button[contains(@text,'福利')]")
                 if element:
@@ -114,7 +115,7 @@ class  KuaiShouAutomation(BaseOperation):
             element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.Button[contains(@text,'看直播')]")
             if element:
                 element.click()             
-                idx = random.randint(2,5)
+                idx = random.randint(3,5)
                 for iter in range(idx):
                     for iterb in range(5):
                         self.sleep(5)
@@ -126,10 +127,69 @@ class  KuaiShouAutomation(BaseOperation):
                 if element:       
                     element.click()     
         
+        
+        #daily money
+        self.driverSwipe.SwipeDown()
+        element = self.find_element_by_xpath_without_exception(self.driver,"//*[@text='我的金币']/../following-sibling::android.view.View[1]")
+        if element:
+            self.stat.dailyEndMoney = int(element.text)
+        element = self.find_element_by_xpath_without_exception(self.driver,"//*[contains(@text,'可用抵用金')]/../following-sibling::android.view.View[1]")
+        if element:
+            self.stat.endMoney = float(element.text)
+        if self.possibilityExecution(100):
+            self.drawMoney()      
         #quit the page
         self.driver.back()
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))    
+    def drawMoney(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                        
+        if self.stat.endMoney and self.stat.endMoney > 5:
+            element = self.find_element_by_xpath_without_exception(self.driver,"//*[contains(@text,'可用抵用金')]/../following-sibling::android.view.View[1]")
+            if element:
+                element.click()
+                self.sleep(3)
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='领现金']")
+                if element:
+                    element.click()
+                    self.sleep(3)
+                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='3元']")
+                    if element:
+                        element.click()
+                        self.sleep(1)
+                        element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='立即领取']")
+                        if element:
+                            element.click()                                             
+                            self.sleep(1)
+                            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.Button[@text='提取']")
+                            if element:
+                                element.click()                                             
+                                self.sleep(1)                                
+                                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='极速到账']")
+                                if element:
+                                    element.click()  
+                                    self.sleep(5)
+                                    #switch contexts
+                                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='金牌猎头群']/../..")
+                                    if element:
+                                        element.click()
+                                        self.sleep(1)                                                                                                
+                                        element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.Button[@text='分享']")
+                                        if element:
+                                            element.click()
+                                            self.sleep(1)
+                                            element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.Button[@text='返回第三方工具']")
+                                            if element:
+                                                element.click()
+                                                self.sleep(5)
+                                                #switch contexts
+                                                element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.Button[@text='提取']")
+                                                if element:
+                                                    element.click()                                            
+                                                                                                                               
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                    
     def mainAutomation(self,number):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
+
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
         sleepseconds=5
         sleep(sleepseconds+15+random.randint(0,5000)/1000)     
@@ -163,17 +223,20 @@ class  KuaiShouAutomation(BaseOperation):
         sleepseconds = 5
         fixedcomments=['cool','哈哈哈哈','太有才了','真形象','very good','nice','真他娘好','惊掉了下巴','太他妈有才了','喜欢','爱了，爱了','这么优秀，我只能关注了']        
         for iter in range(number):
-            self.driverSwipe.SwipeUp()
-            #
-            element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/like_icon')
-            if not element:   
-                #直播
-                self.driverSwipe.SwipeUp()      
+            self.driverSwipe.SwipeUpALittle()
+            #Skip all online
+            for iter in range(5):
+                element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/like_icon')
+                if not element:   
+                    #直播
+                    self.driverSwipe.SwipeUpALittle() 
+                else:
+                    break     
             #sometimes pause
             if random.randint(0,1024) % 17 ==0:
-                sleep(sleepseconds+sleepseconds+random.randint(0,15000)/1000)
+                sleep(sleepseconds+sleepseconds+random.randint(0,10000)/1000)
             else:
-                sleep(sleepseconds+random.randint(0,10000)/1000)
+                sleep(sleepseconds+random.randint(0,5000)/1000)
             #继续看
             element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/close')
             if element:
@@ -186,7 +249,7 @@ class  KuaiShouAutomation(BaseOperation):
                     element.click()
                     self.sleep(1)
             #write the comments
-            if self.possibilityExecution(20):
+            if self.possibilityExecution(15):
                 element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/comment_icon')
                 if element:
                     element.click()  
@@ -233,6 +296,7 @@ class  KuaiShouAutomation(BaseOperation):
         #sleep(sleepseconds+random.randint(0,10))        
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))            
     def watchAdsVedio(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                        
         for iter in range(20):
             self.sleep(5)
             element = self.find_element_by_id_without_exception(self.driver,'com.kuaishou.nebula:id/video_close_icon')
@@ -243,7 +307,6 @@ class  KuaiShouAutomation(BaseOperation):
             self.driver.back()           
     def actAutomation(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
-
         self.stat.startTime = time.time()
 
         crashCount=0
@@ -274,7 +337,7 @@ if __name__ == '__main__':
     devices=[
              #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
              #,
-             #ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+             ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
              #,
              #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
              #,
@@ -284,7 +347,7 @@ if __name__ == '__main__':
              #,
              #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
              #,
-             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+             #ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
     #devices = [('UEU4C16B16004079','9.1')]   
     

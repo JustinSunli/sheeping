@@ -70,30 +70,30 @@ class  TouTiaoAutomation(BaseOperation):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
         
         #point = exists(Template(r"..\imagesrc\tpl1580907022260.png",threshold=0.8))
-        self.sleep(10,3)
+        self.sleep(16,5)
         #pretend to download
-        if self.possibilityExecution(50):
-            element = self.find_element_by_xpath_without_exception(self.driver, "//*[@text='免费下载']")
-            if element:
-                element.click()
-                self.sleep(3,3)
-                self.driver.back()
+#         if self.possibilityExecution(50):
+#             element = self.find_element_by_xpath_without_exception(self.driver, "//*[@text='免费下载']")
+#             if element:
+#                 element.click()
+#                 self.sleep(3,3)
+#                 self.driver.back()
         #pretend
         if self.possibilityExecution(50):
             element = self.find_element_by_xpath_without_exception(self.driver, "//*[@text='查看详情']")
             if element:
                 element.click()
-                self.sleep(2)
-                if self.possibilityExecution(30):
+                self.sleep(5,5)
+                if self.possibilityExecution(50):
                     for iter in range(random.randint(1,4)):
                         self.driverSwipe.SwipeUpALittle()
                         self.sleep(2)
                 self.driver.back()
-        self.sleep(10,3)
+        self.sleep(5,5)
         
         self.driver.back()
         #driver.find_element_by_xpath("//*[contains(@content-desc, '再看一个获得')]")
-        self.sleep(3)
+        self.sleep(5)
         if self.possibilityExecution(80):
             element = self.find_element_by_xpath_without_exception(self.driver, "//*[contains(@content-desc, '再看一个获得')]")
             if element:
@@ -104,68 +104,56 @@ class  TouTiaoAutomation(BaseOperation):
                 if goldnumber > 1000:
                     element.click()
                     self.watchAdsVedio()
-#             else:
-#                 element = self.find_element_by_accessibility_id_without_exception(self.driver, "坚持退出")
-#                 if element:
-#                     element.click()
-#                     return
-#         else:
+
         element = self.find_element_by_accessibility_id_without_exception(self.driver, "坚持退出")
         if element:
             element.click()
         
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
                 
-#         element=self.find_element_by_xpath_without_exception(self.driver, "//android.webkit.WebView/android.webkit.WebView/android.view.View/android.view.View[2]/android.app.Dialog/android.view.View/android.view.View[2]/android.view.View[3]")
-#         if not element:
-#             element=self.find_element_by_xpath_without_exception(self.driver, "//android.webkit.WebView/android.webkit.WebView/android.view.View/android.app.Dialog/android.view.View/android.view.View[2]/android.view.View[3]")
-#         if element: 
-#             element.click()
-#             sleep(15 +random.randint(0,5000)/1000)
-#             
-#             element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='关闭广告']")
-#             if element:
-#                 element.click()
-#             else:
-#                 self.driver.back()        
-#         else:
-#             print()
-#             #self.driver.back() 
     def doTask(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
-
-        #keyevent("BACK")
-        sleepseconds = 5    
-        sleep(sleepseconds+random.randint(0,5000)/1000)
-        self.driver.back()
-        sleep(sleepseconds+random.randint(0,5000)/1000)
-        self.driver.back()
-        
-        self.logger.info("-------"+self.deviceName+"------"+"------Watch Vedio--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
-        times = random.randint(1,3)
-        for iter in range(times):
-            self.watchVedio()
-        #可能横屏了
-        self.driver.back()
-
+        self.closeStrangePopWindow()
         self.logger.info("-------"+self.deviceName+"------"+"------Go to Task--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
         #go to task
         element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[3]/android.widget.ImageView")
         if element:
             element.click()
             sleep(5+random.randint(0,3000)/1000)
+            self.closeStrangePopWindow()
             #unknow temp pop activity
-            self.driver.back()
+            #self.driver.back()
             sleep(5+random.randint(0,3000)/1000)
             #guan bi
             element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Image[@text='关闭']")
             if element:
                 element.click()            
-            #签到
-            element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'签到成功')]/following-sibling::android.view.View[4]")
+        else:
+            return  
+        
+        self.finishTasks()
+        self.closeStrangePopWindow()
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
+    def finishTasks(self):
+        #签到
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'签到成功')]/following-sibling::android.view.View[4]")
+        if element:
+            element.click()        
+        #swipe to the task page
+        for iter in range(10):
+            self.driverSwipe.SwipeUpALittle()
+            self.sleep(2)
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='日常任务']")
             if element:
-                element.click()
-                
+                break
+        
+        #Double read gift
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='点击翻倍']")
+        if element: 
+            element.click()
+            element = self.find_element_by_xpath_without_exception(self.driver, "//*[contains(@text,'我知道了')]")
+            if element: 
+                element.click()            
             
         self.logger.info("-------"+self.deviceName+"------"+"------open golden ball--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))      
         #open golden ball
@@ -272,55 +260,335 @@ class  TouTiaoAutomation(BaseOperation):
                 element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='我要睡了']")
                 if element:
                     element.click()  
-                self.driver.back()          
+                self.driver.back()   
         
-#         self.driverSwipe.SwipeUp()
-#         sleep(1+random.randint(0,1000)/1000)
-#         self.driverSwipe.SwipeUp()
-#         element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View/android.view.View[13]/android.widget.Button[3]")
-#         if element:
-#             element.click()
-#             for i in range(5) :
-#                 element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='搜索']")
-#                 if element:
-#                     element.click()
-#                     sleep(2+random.randint(0,3000)/1000)
-#                     self.driver.back()  
-        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
+        #get the end money     
+        for iter in range(5):
+            self.driverSwipe.SwipeDown()
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='元']")
+            if element:
+                break
+        
+        self.drawMoney()
+               
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))     
+        
+    def drawMoney(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='元']")
+        if element:        
+            element.click()
+            self.sleep(2)
+            
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='去提现']/../preceding-sibling::android.view.View[1]")
+            if element:
+                if element.text:
+                    self.stat.endMoney = float(element.text)
+    
+                if self.possibilityExecution(0.02):
+                    if self.stat.endMoney > 20:
+                        self.logger.info("-------"+self.deviceName+"------"+"statisfy the condition of draw money--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+                        element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='去提现']")
+                        if element:        
+                            element.click() 
+                            self.sleep(2)
+                            #0.5 or 15
+                            element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='支付宝提现']/../following-sibling::android.view.View[2]")
+                            if element:        
+                                element.click() 
+                                self.sleep(2)
+                                element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@text='立即提现']")
+                                if element:        
+                                    element.click()  
+                                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[contains(@text,'知道了')]")
+                                    if element:        
+                                        element.click()                                                      
+                                        self.driver.back()
+                                        self.driver.back()
+                                
+                self.driver.back()                         
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))           
 
-    def watchVedio(self):
-        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
-        #    
-        #go to vedio
-        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[2]/android.widget.ImageView")
-        if element:
-            element.click()    
-            sleep(2+random.randint(0,3000)/1000)
-            element.click() 
-            sleep(2+random.randint(0,3000)/1000)
-            elements = self.find_elements_by_xpath_without_exception(self.driver, "//android.widget.ImageView[contains(@content-desc, '播放视频')]")  
-            if len(elements) !=0 :
-                element = elements[random.randint(0,len(elements)-1)]
+    def watchVedioDetail(self,activity):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        ra =random.randint(5,10)
+        for iter in range(ra):
+            #重播
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@resource-id='com.bytedance.article.lite.plugin.xigua.shortvideo.player:id/video_complete_finish_replay']")
+            if element:
+                break
+            else:
+                if self.driver.current_activity != activity:
+                    break
+                #
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Button[contains(@text, '立即')]")
+                if element:
+                    break
+                else:
+                    sleep(30)
+        
+        
+        self.VedioStarAndComments() 
+        #quit the vedio page    
+        self.driver.back()                    
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))    
+    def VedioStarAndComments(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        #Star
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='赞']/..")
+            if element:
                 element.click()
-                ra =random.randint(5,10)
-                for iter in range(ra):
-                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.view.View[@resource-id='com.bytedance.article.lite.plugin.xigua.shortvideo.player:id/video_complete_finish_replay']")
+        #store
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='赞']/../preceding-sibling::android.widget.LinearLayout[2]/android.widget.ImageView[1]")
+            if element:            
+                element.click() 
+                
+        #zhuan fa, 转发
+        if self.possibilityExecution(30):
+            #
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='赞']/../preceding-sibling::android.widget.LinearLayout[3]/android.widget.FrameLayout[1]/android.widget.ImageView[1]")
+            if element:            
+                element.click()
+                self.sleep(2)
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='转发到头条']")
+                if element:
+                    element.click()   
+                    self.sleep(2) 
+                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='发布']")
                     if element:
-                        break
+                        element.click()                 
+
+        #write comments
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='赞']/../preceding-sibling::android.widget.LinearLayout[1]")
+            if element:
+                element.click()
+                self.sleep(2)
+                comments=[]
+                idx = random.randint(1,5)
+                for iter in range(idx):
+                    #get the comments
+                    elements=self.find_elements_by_xpath_without_exception(self.driver, "//android.widget.ListView/android.widget.RelativeLayout/android.widget.LinearLayout[2]/android.widget.TextView")
+                    if len(elements):
+                        for ele in elements:
+                            comments.append(ele.text)
                     else:
-                        if self.driver.current_activity != '.activity.SplashActivity':
-                            break
-                        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.Button[contains(@text, '立即')]")
+                        break
+                    self.driverSwipe.SwipeUp()
+                #write the comments
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='写评论...']")
+                if element:
+                    element.click()
+                    self.sleep(2)
+                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.EditText[contains(@text,'友善是交流的起点')]")
+                    content="哈哈哈哈哈哈哈哈哈哈，很好，有水平"
+                    if len(comments):
+                        content=comments[random.randint(0,len(comments)-1)]                    
+                    if element:
+                        element.send_keys(content)
+                        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.CheckBox[@text='同时转发']")
                         if element:
-                            break
-                        else:
-                            sleep(60)
-                    
-                #sleep(random.randint(5*1000*60,10*1000*60)/1000)
-        #element = self.find_element_by_xpath_without_exception(element, "../following-sibling::android.view.View[1]")
-        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
-         
+                            element.click()                                                           
+                        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='发布']")
+                        if element:
+                            element.click()   
+            self.driver.back()  
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))   
+                 
+    def watchVedio(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        times = random.randint(1,3)
+        for iter in range(times):           
+            #go to vedio
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[2]/android.widget.ImageView")
+            if element:
+                element.click() 
+                self.closeStrangePopWindow()   
+                sleep(2+random.randint(0,3000)/1000)
+                element.click() 
+                sleep(2+random.randint(0,3000)/1000)
+                elements = self.find_elements_by_xpath_without_exception(self.driver, "//android.widget.ImageView[contains(@content-desc, '播放视频')]")  
+                if len(elements) !=0 :
+                    element = elements[random.randint(0,len(elements)-1)]
+                    element.click()
+                    self.watchVedioDetail(self.driver.current_activity)
                    
+        #可能横屏了,没横屏刷新
+        self.driver.back()                           
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
+    
+    def watchArticle(self,activity):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        self.sleep(10, 5)
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='收藏']")
+        if not element:
+            self.logger.info("-------"+self.deviceName+"------"+"probably enter an ads--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+            self.sleep(10)
+            self.driver.back()
+            self.sleep(3)
+            for iter in range(4):
+                if self.driver.current_activity!=activity:
+                    self.driver.back()
+                    self.sleep(1)
+            return  
+        idx = random.randint(5,20)
+        for iter in range(idx):
+            self.driverSwipe.SwipeUp()
+            self.sleep(10, 6)
+        
+        #Store
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='收藏']")
+            if element:            
+                element.click()        
+        
+        #Star
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='赞']")
+            if element:            
+                element.click()        
+        #zhuan fa, 转发
+        if self.possibilityExecution(30):
+            #
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='分享']")
+            if element:            
+                element.click()
+                self.sleep(2)
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='转发到头条']")
+                if element:
+                    element.click()   
+                    self.sleep(2) 
+                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='发布']")
+                    if element:
+                        element.click()         
+        #comments
+        if self.possibilityExecution(50):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.ImageView[@content-desc='赞']/../preceding-sibling::android.widget.FrameLayout[1]/android.widget.ImageView[1]")
+            if element:            
+                element.click()
+                self.sleep(2)
+                comments=[]
+                idx = random.randint(1,5)
+                for iter in range(idx):
+                    #get the comments
+                    elements=self.find_elements_by_xpath_without_exception(self.driver, "//android.widget.ListView/android.widget.RelativeLayout/android.widget.LinearLayout[2]/android.widget.TextView")
+                    if len(elements):
+                        for ele in elements:
+                            comments.append(ele.text)
+                    else:
+                        break
+                    self.driverSwipe.SwipeUp()
+                #write the comments
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[contains(@text,'写评论')]")
+                if element:
+                    element.click()
+                    self.sleep(2)
+                    element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.EditText[contains(@text,'友善是交流的起点')]")
+                    content="哈哈哈哈哈哈哈哈哈哈，很好，有水平"
+                    if len(comments):
+                        content=comments[random.randint(0,len(comments)-1)]
+                    if element:
+                        element.send_keys(content)
+                        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.CheckBox[@text='同时转发']")
+                        if element:
+                            element.click()                                                           
+                        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='发布']")
+                        if element:
+                            element.click()
+         
+        self.driver.back()                   
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+    
+    def closeStrangePopWindow(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        for iter in range(5):
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[3]/android.widget.ImageView")
+            if not element:
+                self.driver.back()
+                self.sleep(2) 
+            else:
+                break          
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+    def watchLittleVedio(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        for iter in range(random.randint(1,10)):
+            self.sleep(5, 15)
+            #Star
+            if self.possibilityExecution(50):
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.LinearLayout[contains(@content-desc,'点赞')]/android.widget.ImageView[1]")
+                if element:            
+                    element.click()        
+                
+            self.driverSwipe.SwipeLeft()             
+        
+        self.driver.back()         
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))          
+    def mainAutomation(self):     
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
+        sleepseconds = 5    
+        sleep(sleepseconds+random.randint(0,5000)/1000)
+        self.closeStrangePopWindow()
+        #go to Home
+        element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[1]/android.widget.ImageView")
+        if element:
+            element.click()         
+        
+        for iter in range(random.randint(5,10)): 
+            self.sleep(3) 
+            for it in range(random.randint(2,4)):
+                self.driverSwipe.SwipeUp()
+                self.sleep(2)
+            elements = self.find_elements_by_xpath_without_exception(self.driver, "//androidx.recyclerview.widget.RecyclerView/android.widget.RelativeLayout")  
+            if len(elements)==0:
+                break
+            idx = random.randint(0,100) % len(elements)
+            if len(elements)!=0:
+                activity = self.driver.current_activity
+                elements[idx].click()#
+                self.sleep(5)
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.RelativeLayout[contains(@content-desc, '视频播放器')]")  
+                if element:
+                    #watch vedio
+                    self.watchVedioDetail(self.driver.current_activity)#
+                    self.closeStrangePopWindow()
+                    self.temporaryDoTask()                        
+                    continue
+
+                element = self.find_element_by_xpath_without_exception(self.driver, "//com.ss.android.ugc.detail.detail.ui.n")  
+                if element: 
+                    self.watchLittleVedio() 
+                    self.closeStrangePopWindow()
+                    self.temporaryDoTask()                                        
+                    continue             
+                    #
+                element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@content-desc='更多操作']")  
+                if element:
+                    #Read Article
+                    self.watchArticle(activity)
+                    self.closeStrangePopWindow()
+                    self.temporaryDoTask()              
+                    continue         
+            
+#         self.logger.info("-------"+self.deviceName+"------"+"------Watch Vedio--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+#         self.watchVedio()
+
+        self.logger.info("-------"+self.deviceName+"------"+"------Finish Overall Tasks--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
+        #任务页
+        #self.closeStrangePopWindow()
+        self.doTask()
+        
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                   
+    def temporaryDoTask(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
+        if self.possibilityExecution(60):
+            self.doTask()    
+            #go to Home
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TabWidget/android.widget.RelativeLayout[1]/android.widget.ImageView")
+            if element:
+                element.click()         
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
     def actAutomation(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
 
@@ -330,7 +598,7 @@ class  TouTiaoAutomation(BaseOperation):
         while(True):
             try:
                 self.init_driver()
-                self.doTask()
+                self.mainAutomation()
 #                 self.GotoMeAndView()
                 try:
                     self.tearDown()
@@ -355,7 +623,7 @@ if __name__ == '__main__':
     devices=[
           #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
           #,
-          ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+          #ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
           #,
           #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
           #,
@@ -365,7 +633,7 @@ if __name__ == '__main__':
           #,
           #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
           #,
-          # ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+          ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
     
     #devices = [('UEU4C16B16004079','9.1')]       

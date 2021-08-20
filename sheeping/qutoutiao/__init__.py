@@ -10,9 +10,15 @@
 #sys.path.extend(syspath)
 
 
+# adb devices
+# adb shell pm list package # adb shell pm list package -3 -f 
+# adb logcat -c // clear logs
+# adb logcat ActivityManager:I *:s
+
+#aapt dump badging C:\Users\Administrator\Desktop\api\ff0602.apk
+
 
 #adb connect连接设备很慢，需要用以下命令
-
 #adb -s SAL0217A28001753 usb
 #adb tcpip 5555
 #adb connect 192.168.0.106:5555
@@ -54,11 +60,19 @@
 #adb -s SAL0217A28001753 shell dumpsys activity top| findstr ACTIVITY
 #adb -s SAL0217A28001753 shell ps 26387
 
+#wechat webview
+#debugmm.qq.com/?forcex5=true
+#debugtbs.qq.com
+
 #error: The instrumentation process cannot be initialized. Make sure the application under test does.
 #adb -s SAL0217A28001753 uninstall io.appium.settings
 ##adb -s SAL0217A28001753 uninstall io.appium.uiautomator2.server.test
 
 
 
+#定位元素的父（parent::）、兄弟（following-sibling::、preceding-sibling::）节点
+
+
+#=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=
 
 

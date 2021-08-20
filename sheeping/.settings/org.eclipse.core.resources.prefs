@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//qutoutiao/AiQiyiAutomation.py=utf-8
 encoding//qutoutiao/Automation.py=utf-8
 encoding//qutoutiao/AutomationSmall.py=utf-8
 encoding//qutoutiao/BaseOperation.py=utf-8
@@ -13,8 +14,9 @@ encoding//qutoutiao/KuaiShouAutomation.py=utf-8
 encoding//qutoutiao/KuaiShouAutomation3.py=utf-8
 encoding//qutoutiao/MaYiKanDianAutomation.py=UTF-8
 encoding//qutoutiao/MiduAutomation.py=utf-8
+encoding//qutoutiao/PianDuoduoAutomation.py=utf-8
 encoding//qutoutiao/QiMaoAutomation.py=utf-8
-encoding//qutoutiao/QuanMinAutomation.py=utf-8
+encoding//qutoutiao/QiXinBaoLawyerAutomation.py=utf-8
 encoding//qutoutiao/QujianpanAutomation.py=utf-8
 encoding//qutoutiao/QutoutiaoAutomation.py=utf-8
 encoding//qutoutiao/TouTiaoAutomation.py=utf-8

@@ -106,7 +106,12 @@ class BaseOperation:
         self.desired_caps['udid'] = self.deviceName
         self.desired_caps['newCommandTimeout'] = 300#1500 #default 60 otherwise quit automatically
         self.desired_caps['ignoreUnimportantViews'] = True 
-        self.desired_caps['normalizeTagNames'] = True 
+        self.desired_caps['normalizeTagNames'] = True
+        self.desired_caps['autoGrantPermissions'] = True 
+        self.desired_caps['adbExecTimeout'] = 200000 #adb command timeout
+        self.desired_caps['uiautomator2ServerLaunchTimeout'] = 100000 #initialize the app timeout
+        
+        
         
         #
         #desired_caps['disableAndroidWatchers'] = True  
@@ -127,7 +132,14 @@ class BaseOperation:
     def sleep(self,time=0,randIdex=2):
         #sleep some seconds
         sleep(time+random.randint(0,randIdex*1000)/1000)
-        
+    
+    def ElementUsable(self,element):
+        status=False
+        try:    
+            status= element and element.is_displayed()
+        except Exception:
+            pass
+        return status
     def preExecution(self):
         self.stat.startTime = time.time()
         return 
@@ -148,7 +160,7 @@ class BaseOperation:
     
     def tearDown(self):
         try:
-            apps = ['com.android.contacts','com.android.settings']
+            apps = ['com.android.contacts','com.android.settings','com.android.mms']
             for appname in apps:
                 self.driver.terminate_app(appname)     
         except Exception:

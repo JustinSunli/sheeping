@@ -1,6 +1,7 @@
 # coding: utf-8
 import sys
 import os
+from bokeh.themes import default
 curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = os.path.split(curPath)[0]
 sys.path.append(rootPath)
@@ -47,8 +48,9 @@ class  QiMaoAutomation(BaseOperation):
         super(QiMaoAutomation,self).__init__(executionparam)
         
         self.stat.AppName = self.__class__.__name__
-        self.basecount = 10 + random.randint(0,10)
-        self.gabageDict = {}#         
+        self.basecount = 50 + random.randint(0,10)
+        self.gabageDict = {}#   
+        self.onceAdsCount = 0      
 
     def init_driver(self): 
         self.desired_caps['appPackage'] = 'com.kmxs.reader'        
@@ -68,9 +70,16 @@ class  QiMaoAutomation(BaseOperation):
     
     def watchAdsVedio(self,defaultActivity):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
+        if self.driver.current_activity == defaultActivity:
+            return
+        if self.onceAdsCount >=10:
+            self.logger.info("-------"+self.deviceName+"------"+"Reach Max Count--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))            
+            return
+        self.onceAdsCount+=1
         self.sleep(5,5)
-        #close ads window
-        self.driver.back()
+        if self.driver.current_activity!=defaultActivity:
+            #close ads window
+            self.driver.back()
         self.sleep(2)
         if self.driver.current_activity!=defaultActivity:
             #
@@ -79,22 +88,30 @@ class  QiMaoAutomation(BaseOperation):
                 element.click()  
             
             self.sleep(2)
+            if self.onceAdsCount>=6:#exceed 60s
+                element = self.find_elements_by_xpath_without_exception(self.driver,'//android.webkit.WebView/following-sibling::android.widget.ImageView[1]')
+                if element:
+                    element.click()
+            
             if self.driver.current_activity!=defaultActivity:
                 self.watchAdsVedio(defaultActivity)     
-
+        self.onceAdsCount=0
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
     def goToGetReadMoney(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
+        
         elements=self.find_elements_by_xpath_without_exception(self.driver,'//android.view.View[@text="领金币"]')
         for ele in elements:
             ele.click()
             self.sleep(2)
-            element = self.find_element_by_xpath_without_exception(self.driver,"//*[contains(@text,'看小视频再领')]")
+            element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'看小视频再领')]")
             if element:
                 currentActivity=self.driver.current_activity
                 element.click() 
                 self.sleep(3)
                 self.watchAdsVedio(currentActivity)  
-                
+
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                        
     def watchNovels(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
            
@@ -102,7 +119,7 @@ class  QiMaoAutomation(BaseOperation):
         elements=self.find_elements_by_id_without_exception(self.driver, 'com.kmxs.reader:id/bookshelf_book_item_image')
         randomelement = None
         if len(elements)!=0:
-            idx = random.randint(0,len(elements)-1)
+            idx = random.randint(1,len(elements)-1)
             randomelement = elements[idx]
         else:
             self.logger.info("-------"+self.deviceName+"------"+"Don't have novels--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))            
@@ -149,10 +166,31 @@ class  QiMaoAutomation(BaseOperation):
             element.click()              
 
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) )) 
+    def drawMoney(self):
+        self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) )) 
+
+        element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[contains(@text,"金币余额")]')
+        if element:        
+            txt = element.text
+            goldNumber = int(txt[txt.find('：')+1:txt.find('(')])
+            if goldNumber < 100000:
+                return
+        element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@resource-id='app']/android.widget.ListView/android.view.View[2]")
+        if element:
+            element.click()   
+            self.sleep(2)
+            element = self.find_element_by_xpath_without_exception(self.driver,'//android.view.View[contains(@text,"快速到账")]')
+            if element:              
+                currentActivity=self.driver.current_activity
+                element.click() 
+                self.sleep(4)
+                self.watchAdsVedio(currentActivity) 
+                self.driver.back()
                            
+        self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                       
     def doTask(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
-        sleepseconds = 10    
+        sleepseconds = 20    
         sleep(sleepseconds+random.randint(0,5000)/1000)
         
         self.watchNovels()
@@ -162,6 +200,52 @@ class  QiMaoAutomation(BaseOperation):
         if element:
             element.click()   
             self.sleep(3)
+            self.driverSwipe.SwipeUpALittle()
+            if self.possibilityExecution(0):
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='金币提现']")
+                if element:
+                    element.click() 
+                    self.drawMoney()           
+            #福利中心
+            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='福利中心']")
+            if element:
+                element.click() 
+                self.sleep(3) 
+                
+                #签到
+                #在领50金币
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'看小视频再领')]")
+                if element:
+                    currentActivity=self.driver.current_activity
+                    element.click() 
+                    self.watchAdsVedio(currentActivity) 
+                #领红包 
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'领红包')]")
+                if element:
+                    element.click() 
+                    self.sleep(1)
+                    element = self.find_element_by_xpath_without_exception(self.driver,"//*[@text='明日再来']/../following-sibling::android.view.View[1]")
+                    if element:
+                        element.click() 
+                    
+                    
+                self.driverSwipe.SwipeUp()
+                self.driverSwipe.SwipeUpALittle()
+                #watch a ads
+                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'去观看')]")
+                if element:
+                    currentActivity=self.driver.current_activity
+                    element.click()  
+                    self.sleep(2)
+                    self.watchAdsVedio(currentActivity) 
+                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'可领取')]")
+                    if element:
+                        element.click()
+            
+                #看小说金币
+                self.goToGetReadMoney()  
+                self.driver.back()
+                            
             #幸运大转盘
             if self.stat.dailyFirstExecution:
                 element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[@text='幸运大转盘']")
@@ -180,43 +264,26 @@ class  QiMaoAutomation(BaseOperation):
                         if element:
                             currentActivity=self.driver.current_activity
                             element.click()
-                            self.sleep(3)                                                     
+                            self.sleep(5)                                                     
                             if self.driver.current_activity != currentActivity:
                                 self.watchAdsVedio(currentActivity)
                                 
-                            element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[@text='好的']")
+                            element = self.find_element_by_xpath_without_exception(self.driver,"//*[@text='好的']")
                             if element:                        
                                 element.click() 
+                                self.sleep(3)
                                 continue                                
-    
                     self.driver.back()
-                
-            element = self.find_element_by_xpath_without_exception(self.driver, "//android.widget.TextView[@text='福利中心']")
-            if element:
-                element.click() 
-                self.sleep(3) 
-                
-                #签到
-                #在领50金币
-                element = self.find_element_by_xpath_without_exception(self.driver,"//android.widget.TextView[contains(@text,'看小视频再领')]")
-                if element:
-                    currentActivity=self.driver.current_activity
-                    element.click() 
-                    self.watchAdsVedio(currentActivity)  
-                
-                #watch a ads
-                element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'去观看')]")
-                if element:
-                    currentActivity=self.driver.current_activity
-                    element.click()  
-                    self.sleep(2)
-                    self.watchAdsVedio(currentActivity) 
-                    element = self.find_element_by_xpath_without_exception(self.driver,"//android.view.View[contains(@text,'可领取')]")
-                    if element:
-                        element.click()
+
             
-                #看小说金币
-                self.goToGetReadMoney()           
+            self.driverSwipe.SwipeDownALittle()
+            #today money, total money
+            element=self.find_element_by_id_without_exception(self.driver, "com.kmxs.reader:id/user_fragment_coin")
+            if element:
+                self.stat.endMoney = int(element.text)
+            element=self.find_element_by_id_without_exception(self.driver, "com.kmxs.reader:id/user_fragment_coin_today")
+            if element:
+                self.stat.dailyEndMoney = int(element.text)                                
         
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))        
       
@@ -262,9 +329,9 @@ if __name__ == '__main__':
              #,
              #ExecutionParam(deviceName='CXDDU16C07003822',version='9',port='4731',bootstrapPort='4732',username='15372499352', password='Initial0')
              #,
-             #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
+             ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
              #,
-             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+             #ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
     
     #devices = [('UEU4C16B16004079','9.1')]       

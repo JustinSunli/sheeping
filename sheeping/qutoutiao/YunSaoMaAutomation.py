@@ -53,7 +53,9 @@ class  YunSaoMaAutomation(BaseOperation):
     def init_driver(self): 
         self.desired_caps['appPackage'] = 'com.tencent.mm'        
         self.desired_caps['appActivity'] = 'com.tencent.mm.ui.LauncherUI'
-        self.desired_caps['chromeOptions'] = { 'androidProcess': 'com.tencent.mm:tools',
+        self.desired_caps['chromeOptions'] = { 
+                                               # 'androidPackage': 'com.android.chrome',
+                                                'androidProcess': 'com.tencent.mm:tools',
                                                'w3c': False
                                               } 
         self.driver = webdriver.Remote('http://localhost:%s/wd/hub' % self.port, self.desired_caps)
@@ -94,28 +96,37 @@ class  YunSaoMaAutomation(BaseOperation):
     def doYunSaoMaTasks(self): 
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))          
         #pause read
-        self.sleep(10)  
+        self.sleep(5)  
         #read articles, 26/hour,50-120/day
-        randomCount = random.randint(10,20)
+        randomCount = random.randint(12,18)
         for iter in range(randomCount):
+            element = self.find_element_by_xpath_without_exception(self.driver,"//*[@id='task_load_read']")
+            if self.ElementUsable(element):
+                break  
+            element = self.find_element_by_xpath_without_exception(self.driver,"//*[@id='task_none_read']")
+            if self.ElementUsable(element):
+                break                
+            self.logger.info("-------"+self.deviceName+"------"+"Read the "+str(iter)+"th Article------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))
             self.readArticle()
             self.currentcount+=1  
             self.driver.back()
             self.sleep(2) 
              
-        self.sleep(10)           
-        self.driver.back()
-        self.driver.implicitly_wait(0.05)  
-        count=0
-        for iter in range(100):
-            try:
-                self.find_element_by_xpath_without_exception(self.driver,"//*[@id='task_btn_read']").click()
-                count+=1
-                break
-            except Exception:
-                continue
-            self.logger.info("-------"+str(count)+"------"+str(time.time())) 
-        self.driver.implicitly_wait(3)
+        self.sleep(5)  
+        element = self.find_element_by_xpath_without_exception(self.driver,"//*[@id='sign_btn']")
+        if not element:         
+            self.driver.back()
+            self.driver.implicitly_wait(0.05)  
+            count=0
+            for iter in range(50):
+                try:
+                    self.find_element_by_xpath_without_exception(self.driver,"//*[@id='task_btn_read']").click()
+                    count+=1
+                    break
+                except Exception:
+                    continue
+                self.logger.info("-------"+str(count)+"------"+str(time.time())) 
+                self.driver.implicitly_wait(3)
         
         if self.stat.dailyFirstExecution:
             #sign       
@@ -131,7 +142,18 @@ class  YunSaoMaAutomation(BaseOperation):
             element = self.find_element_by_xpath_without_exception(self.driver,"//img[@class='draw_btn']")
             if element:
                 element.click()              
-                self.drawMoney()       
+                self.drawMoney() 
+        
+        element = self.find_element_by_xpath_without_exception(self.driver,"//div[@class='num goldNum']")
+        if element:
+            try:
+              self.stat.endMoney = int(element.text)
+            except Exception:
+                goldNum = ""
+                elements = self.find_elements_by_xpath_without_exception(self.driver,"//div[@class='num goldNum']/div/div[@class='mt-number-animate-dom']")
+                for element in elements:
+                    goldNum+=element.get_attribute('data-num')
+                self.stat.endMoney = int(goldNum)
         #continue read
 #         element = self.find_element_by_xpath_without_exception(self.driver,"//*[@id='task_btn_read']")
 #         if element:
@@ -162,9 +184,12 @@ class  YunSaoMaAutomation(BaseOperation):
                             element = self.find_element_by_xpath_without_exception(self.driver,"//*[@resource-id='com.tencent.mm:id/fbp']/android.widget.RelativeLayout[1]")
                             if element:
                                 element.click() 
-                                self.sleep(5)
-                                self.driver.switch_to.context('WEBVIEW_com.tencent.mm:tools')    
-                                self.doYunSaoMaTasks()                            
+                                self.sleep(10)
+                                if len(self.driver.contexts)>=2:
+                                    self.driver.switch_to.context(self.driver.contexts[1])
+#                                     self.driver.switch_to.context('WEBVIEW_com.tencent.mm:tools')
+#                                     self.driver.switch_to.context('WEBVIEW_com.tencent.mm:toolsmp')
+                                    self.doYunSaoMaTasks()                            
                                 
 
      
@@ -172,7 +197,7 @@ class  YunSaoMaAutomation(BaseOperation):
     def readArticle(self):
         self.logger.info("-------"+self.deviceName+"------"+"Enter--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))                
         #at least 6s
-        for iter in range(8):
+        for iter in range(7):
             self.sleep(2)
             if self.possibilityExecution(30):
                 self.driverSwipe.SwipeUpALittle()
@@ -180,7 +205,7 @@ class  YunSaoMaAutomation(BaseOperation):
                 self.driverSwipe.SwipeUp()
         if self.possibilityExecution(30):
             element =self.find_element_by_xpath_without_exception(self.driver,"//*[@id='js_parise_wording']") 
-            if element:
+            if self.ElementUsable(element):
                 element.click()               
         self.logger.info("-------"+self.deviceName+"------"+"GoOut--------"+sys._getframe().f_code.co_name+"-------"+time.asctime( time.localtime(time.time()) ))            
                       
@@ -217,7 +242,7 @@ if __name__ == '__main__':
     devices=[
              #ExecutionParam(deviceName='A7QDU18420000828',version='9',port='4723',bootstrapPort='4724',username='18601793121', password='Initial0')
              #,
-             #ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
+             ExecutionParam(deviceName='UEU4C16B16004079',version='9',port='4725',bootstrapPort='4726',username='17131688728', password='Initial0')
              #,
              #ExecutionParam(deviceName='E4J4C17412001168',version='9',port='4727',bootstrapPort='4728',username='16536703898', password='Initial0')
              #,
@@ -227,7 +252,7 @@ if __name__ == '__main__':
              #,
              #ExecutionParam(deviceName='E4JDU17506004553',version='9',port='4733',bootstrapPort='4734',username='17132126385', password='Initial0')
              #,
-             ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
+             #ExecutionParam(deviceName='SAL0217A28001753',version='9',port='4735',bootstrapPort='4736',username='15216706926', password='Initial0')            
              ]
     #devices = [('UEU4C16B16004079','9.1')]   
     
